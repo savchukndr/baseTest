@@ -39,12 +39,12 @@ class DataBase {
     void insertIntoDB(String model, String engine, int count){
         String sql = null;
         try{
-            System.out.println("Inserting [" + count + "] records into the master table");
+            System.out.println("Inserting [" + count + "] records into the car table");
             stmt = conn.createStatement();
                 sql = "INSERT INTO car(model, engine) " +
                         "VALUES ('" + model + "', '" + engine + "')";
                 stmt.executeUpdate(sql);
-            System.out.println("Inserted record [" + count + "] into the master table...\n");
+            System.out.println("Inserted record [" + count + "] into the car table...\n");
 
         }catch(SQLException se){
             //Handle errors for JDBC
@@ -59,14 +59,18 @@ class DataBase {
         String sql = null;
 
         try{
-            System.out.println("Inserting [" + count + "] record into the car table");
+            System.out.println("Inserting [" + count + "] record into the master table");
 
             stmt = conn.createStatement();
-                sql = "INSERT INTO master(name, id_car) " +
-                        "VALUES ('" + name + "', " + id_car + ")";
-                stmt.executeUpdate(sql);
+            sql = "SET FOREIGN_KEY_CHECKS = 0";
+            stmt.executeUpdate(sql);
+            sql = "INSERT INTO master(name, id_car) " +
+                    "VALUES ('" + name + "', " + id_car + ")";
+            stmt.executeUpdate(sql);
+            sql = "SET FOREIGN_KEY_CHECKS=1";
+            stmt.executeUpdate(sql);
 
-            System.out.println("Inserted record [" + count + "] into the car table...\n");
+            System.out.println("Inserted record [" + count + "] into the master table...\n");
 
         }catch(SQLException se){
             //Handle errors for JDBC
@@ -98,24 +102,24 @@ class DataBase {
         }
     }
 
-    void selectRecordDB(int Id){
+    void selectRecordDB(){
         try{
             System.out.println("Selecting row..");
             stmt = conn.createStatement();
 
-            String sql = "SELECT * FROM car WHERE id = " + Id + "" ;
+            String sql = "SELECT name, model, engine FROM car, master WHERE master.id_car = car.id" ;
             ResultSet rs = stmt.executeQuery(sql);
             //STEP 5: Extract data from result set
             while(rs.next()){
                 //Retrieve by column name
-                int id  = rs.getInt("id");
-                int age = rs.getInt("age");
-                String name = rs.getString("name");
+                String name  = rs.getString("name");
+                String model = rs.getString("model");
+                String engine = rs.getString("engine");
 
                 //Display values
-                System.out.print("ID: " + id);
-                System.out.print(", Age: " + age);
-                System.out.print(", Name: " + name);
+                System.out.print("Name: " + name);
+                System.out.print(", Model: " + model);
+                System.out.print(", Engine: " + engine);
                 System.out.println();
             }
             rs.close();

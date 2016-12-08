@@ -8,8 +8,9 @@ public class Main {
     private static String engines[] = {"v10", "v12", "v6", "v4", "govno"};
 
     static void insertData(DataBase ob, String tableName, int n){
-        int idx, idx1, id_car;
+        int idx, idx1, id_car, countCar = 1;
         String randomModels, randomEngines, name;
+        Random rn = new Random();
 
         switch (tableName) {
             case "car":
@@ -19,10 +20,10 @@ public class Main {
                     randomModels = (models[idx]);
                     randomEngines = (engines[idx1]);
                     ob.insertIntoDB(randomModels, randomEngines, i);
+                    countCar++;
                 }
                 break;
             case "master":
-                Random rn = new Random();
                 for(int i=1; i <= n/2; i++) {
                     name = "Name" + String.valueOf(i);
                     id_car = rn.nextInt(n);
@@ -44,24 +45,27 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        int age;
 	    DataBase obTestDB = new DataBase("TestDB", "savchukndr", "savchukao22");
         obTestDB.connectDB();
         //obTestDB.resetDB();
 
         Date startDate = new Date();
-        insertData(obTestDB, "car", 100);
+        insertData(obTestDB, "car", 10000);
         Date endDate = new Date();
 
         checkTime(startDate, endDate);
 
-        /*Date startDate1 = new Date();
-        //for(int i=1; i <= 10; i++){
-            obTestDB.selectRecordDB(66778);
-        //}
+        Date startDate1 = new Date();
+        insertData(obTestDB, "master", 10000);
         Date endDate1 = new Date();
 
-        checkTime(startDate1, endDate1);*/
+        checkTime(startDate1, endDate1);
+
+        Date startDate2 = new Date();
+            obTestDB.selectRecordDB();
+        Date endDate2 = new Date();
+
+        checkTime(startDate2, endDate2);
 
         obTestDB.endConDB();
     }

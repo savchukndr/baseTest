@@ -7,7 +7,7 @@ public class Main {
             "Lada", "Tavria"};
     private static String engines[] = {"v10", "v12", "v6", "v4", "govno"};
 
-    private static void insertData(DataBase ob, String tableName, int n){
+    private static void insertData(mysqlDB ob, String tableName, int n){
         int idx, idx1, id_car;//, countCar = 1;
         String randomModels, randomEngines, name;
         Random rn = new Random();
@@ -45,7 +45,7 @@ public class Main {
     }
 
     public static void main(String[] args) {
-	    DataBase obTestDB = new DataBase("TestDB", "savchukndr", "savchukao22");
+	    mysqlDB obTestDB = new mysqlDB("TestDB", "savchukndr", "savchukao22");
         obTestDB.connectDB();
         //obTestDB.resetDB();
 

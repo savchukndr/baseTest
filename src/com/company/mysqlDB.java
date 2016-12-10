@@ -5,7 +5,7 @@ import java.sql.*;
  * Created by savch on 08.12.2016.
  * Yoj
  */
-class DataBase {
+class mysqlDB implements DataBaseInterface{
     private String db = null;
     private String USER = null;
     private String PASS = null;
@@ -13,14 +13,14 @@ class DataBase {
     private Connection conn = null;
     private Statement stmt = null;
 
-    DataBase(String db, String USER, String PASS){
+    mysqlDB(String db, String USER, String PASS){
         this.db = db;
         this.USER = USER;
         this.PASS = PASS;
         JDBC_DRIVER = "com.mysql.jdbc.Driver";
     }
 
-    void connectDB() {
+    public void connectDB() {
         try{
             Class.forName(JDBC_DRIVER);
 
@@ -36,7 +36,7 @@ class DataBase {
         }
     }
 
-    void insertIntoTableDB(String model, String engine, int count){
+    public void insertIntoTableDB(String model, String engine, int count){
         String sql = null;
         try{
             System.out.println("Inserting [" + count + "] records into the car table");
@@ -55,7 +55,7 @@ class DataBase {
         }//end try
     }
 
-    void insertIntoTableDB(String name, int id_car, int count){
+    public void insertIntoTableDB(String name, int id_car, int count){
         String sql = null;
 
         try{
@@ -81,7 +81,7 @@ class DataBase {
         }//end try
     }
 
-    void resetDB(){
+    public void resetDB(){
         try{
             System.out.println("Reseting table..");
             stmt = conn.createStatement();
@@ -102,7 +102,7 @@ class DataBase {
         }
     }
 
-    void selectRecordTableDB(){
+    public void selectRecordTableDB(){
         try{
             System.out.println("Selecting row..");
             stmt = conn.createStatement();
@@ -133,7 +133,7 @@ class DataBase {
         }
     }
 
-    void endConDB(){
+    public void endConDB(){
         System.out.println("Closing connection...");
         try{
             if(stmt!=null)
@@ -149,7 +149,7 @@ class DataBase {
         System.out.println("Connection closed.");
     }
 
-    void dropTableDB(){
+    public void dropTableDB(){
         try{
             System.out.println("Droping tables..");
             stmt = conn.createStatement();
@@ -169,7 +169,7 @@ class DataBase {
         }
     }
 
-    void createTableDB(){
+    public void createTableDB(){
         try{
             System.out.println("Creating table \"car\"..");
             stmt = conn.createStatement();

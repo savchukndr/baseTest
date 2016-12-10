@@ -35,18 +35,22 @@ public class Main {
         }
     }
 
-    private static void checkTime(Date ob1, Date ob2){
+    private static double checkTime(Date ob1, Date ob2){
         long msElapsedTime;
         double resTime;
         msElapsedTime = ob2.getTime() - ob1.getTime();
         Long longObject = new Long(String.valueOf(msElapsedTime));
-        resTime = longObject.doubleValue() * 0.001;
-        System.out.println("Time executing is: " + resTime + " sec");
+        return longObject.doubleValue() * 0.001;
     }
 
     public static void main(String[] args) {
-	    mysqlDB obTestDB = new mysqlDB("TestDB", "savchukndr", "savchukao22");
-        obTestDB.connectDB();
+        double time1, time2, time3;
+
+       // mysqlDB obTestDB = new mysqlDB("TestDB", "savchukndr", "savchukao22");
+	    pgsqlDB obTestPGDB = new pgsqlDB("TestPGDB", "savchukndr", "savchukao22");
+
+	    //--------MySQL------------
+	    /*obTestDB.connectDB();
         //obTestDB.resetDB();
 
         obTestDB.dropTableDB();
@@ -57,20 +61,29 @@ public class Main {
         insertData(obTestDB, "car", 100);
         Date endDate = new Date();
 
-        checkTime(startDate, endDate);
+        time1 = checkTime(startDate, endDate);
 
         Date startDate1 = new Date();
         insertData(obTestDB, "master", 100);
         Date endDate1 = new Date();
 
-        checkTime(startDate1, endDate1);
+        time2 = checkTime(startDate1, endDate1);
 
         Date startDate2 = new Date();
             obTestDB.selectRecordTableDB();
         Date endDate2 = new Date();
 
-        checkTime(startDate2, endDate2);
+        time3 = checkTime(startDate2, endDate2);
 
-        obTestDB.endConDB();
+        System.out.println("Insert into car time: " + time1 + " sec");
+        System.out.println("Insert into master time: " + time2 + " sec");
+        System.out.println("Select time: " + time3 + " sec");
+        obTestDB.endConDB();*/
+        //-------------------------------
+
+        //----------PostgreSQL-----------
+        obTestPGDB.connectDB();
+        //-------------------------------
+
     }
 }

@@ -36,7 +36,7 @@ class DataBase {
         }
     }
 
-    void insertIntoDB(String model, String engine, int count){
+    void insertIntoTableDB(String model, String engine, int count){
         String sql = null;
         try{
             System.out.println("Inserting [" + count + "] records into the car table");
@@ -55,7 +55,7 @@ class DataBase {
         }//end try
     }
 
-    void insertIntoDB(String name, int id_car, int count){
+    void insertIntoTableDB(String name, int id_car, int count){
         String sql = null;
 
         try{
@@ -102,7 +102,7 @@ class DataBase {
         }
     }
 
-    void selectRecordDB(){
+    void selectRecordTableDB(){
         try{
             System.out.println("Selecting row..");
             stmt = conn.createStatement();
@@ -147,5 +147,60 @@ class DataBase {
             se.printStackTrace();
         }
         System.out.println("Connection closed.");
+    }
+
+    void dropTableDB(){
+        try{
+            System.out.println("Droping tables..");
+            stmt = conn.createStatement();
+
+            String sql = "DROP TABLE master";
+            stmt.executeUpdate(sql);
+            sql = "DROP TABLE car";
+            stmt.executeUpdate(sql);
+            System.out.println("Tables Droped!\n");
+
+        }catch(SQLException se){
+            //Handle errors for JDBC
+            se.printStackTrace();
+        }catch(Exception e){
+            //Handle errors for Class.forName
+            e.printStackTrace();
+        }
+    }
+
+    void createTableDB(){
+        try{
+            System.out.println("Creating table \"car\"..");
+            stmt = conn.createStatement();
+            String sql = "CREATE TABLE car\n" +
+                    "(\n" +
+                    "  id int NOT NULL AUTO_INCREMENT,\n" +
+                    "  model VARCHAR(225),\n" +
+                    "  engine VARCHAR(225),\n" +
+                    "  PRIMARY KEY (id)\n" +
+                    ")";
+            stmt.executeUpdate(sql);
+            System.out.println("Table \"car\" created!\n");
+
+            System.out.println("Creating table \"master\"..");
+            sql = "CREATE TABLE master\n" +
+                    "(\n" +
+                    "  id int NOT NULL AUTO_INCREMENT,\n" +
+                    "  name VARCHAR(225),\n" +
+                    "  id_car INT NOT NULL ,\n" +
+                    "  PRIMARY KEY (id),\n" +
+                    "  FOREIGN KEY (id_car) REFERENCES car(id)\n" +
+                    ")";
+            stmt.executeUpdate(sql);
+            System.out.println("Table \"master\" created!\n");
+
+        }catch(SQLException se){
+            //Handle errors for JDBC
+            se.printStackTrace();
+        }catch(Exception e){
+            //Handle errors for Class.forName
+            e.printStackTrace();
+        }
     }
 }

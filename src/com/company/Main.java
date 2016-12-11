@@ -47,13 +47,13 @@ public class Main {
         double time1, time2, time3;
 
        // mysqlDB obTestDB = new mysqlDB("TestDB", "savchukndr", "savchukao22");
-	    pgsqlDB obTestPGDB = new pgsqlDB("TestPGDB", "savchukndr", "savchukao22");
+	    pgsqlDB obTestPGDB = new pgsqlDB("postgres", "savchukndr", "savchukao22");
 
 	    //--------MySQL------------
 	    /*obTestDB.connectDB();
         //obTestDB.resetDB();
 
-        obTestDB.dropTableDB();
+        obTestDB.dropTableDB("master", "car");
 
         obTestDB.createTableDB();
 
@@ -83,6 +83,8 @@ public class Main {
 
         //----------PostgreSQL-----------
         obTestPGDB.connectDB();
+
+        obTestPGDB.resetDB();
         //-------------------------------
 
     }

@@ -6,7 +6,7 @@ import java.sql.*;
  * Created by savch on 10.12.2016.
  * Yoj
  */
-class pgsqlDB implements DataBaseInterface {
+class pgsqlDB {
     private String db = null;
     private String USER = null;
     private String PASS = null;
@@ -33,7 +33,7 @@ class pgsqlDB implements DataBaseInterface {
             System.err.println( e.getClass().getName()+": "+ e.getMessage() );
             System.exit(0);
         }
-        System.out.println("Connected database successfully...");
+        System.out.println("Connected database successfully...\n");
     }
 
     public void insertIntoTableDB(String model, String engine, int count){
@@ -45,23 +45,69 @@ class pgsqlDB implements DataBaseInterface {
     }
 
     public void resetDB(){
+        try{
+            System.out.println("Reseting table... (PostgreSQL)");
+            stmt = conn.createStatement();
 
+            String sql = "TRUNCATE car, master";
+            stmt.executeUpdate(sql);
+
+            sql = "ALTER SEQUENCE car_id_seq RESTART WITH 1";
+            stmt.executeUpdate(sql);
+
+            sql = "ALTER SEQUENCE master_id_seq RESTART WITH 1";
+            stmt.executeUpdate(sql);
+
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+
+        System.out.println("Table reseted! (PostgreSQL)\n");
     }
 
     public void selectRecordTableDB(){
 
-    };
+    }
 
     public void endConDB(){
 
-    };
+    }
 
-    public void dropTableDB(){
+   /* public void dropTableDB(){
 
-    };
+    }*/
 
-    public void createTableDB(){
+   /* public void createTableDB(){
+        try{
 
-    };
+            System.out.println("Create table \"car\"... (PostgreSQL)");
+            stmt = conn.createStatement();
+            String sql = "CREATE TABLE car\n" +
+                    "(\n" +
+                    "  id SERIAL NOT NULL,\n" +
+                    "  model VARCHAR(225),\n" +
+                    "  engine VARCHAR(225),\n" +
+                    "  PRIMARY KEY (id)\n" +
+                    ")";
+            stmt.executeUpdate(sql);
+            System.out.println("Table \"car\" created! (PostgreSQL)\n");
 
+            System.out.println("Creating table \"master\"... (PostgreSQL)");
+            sql = "CREATE TABLE master\n" +
+                    "(\n" +
+                    "  id     SERIAL NOT NULL,\n" +
+                    "  name   VARCHAR(225),\n" +
+                    "  PRIMARY KEY (id),\n" +
+                    "  id_car INTEGER REFERENCES car\n" +
+                    ")";
+            stmt.executeUpdate(sql);
+            System.out.println("Table \"master\" created! (PostgreSQL)\n");
+
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+        System.out.println("Connected database successfully...");
+    }*/
 }

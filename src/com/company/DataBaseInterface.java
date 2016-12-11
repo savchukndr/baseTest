@@ -18,7 +18,7 @@ interface DataBaseInterface {
 
     void endConDB();
 
-    void dropTableDB();
+    void dropTableDB(String table1, String table2);
 
     void createTableDB();
 }

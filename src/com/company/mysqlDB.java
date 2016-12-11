@@ -5,7 +5,7 @@ import java.sql.*;
  * Created by savch on 08.12.2016.
  * Yoj
  */
-class mysqlDB implements DataBaseInterface{
+class mysqlDB{
     private String db = null;
     private String USER = null;
     private String PASS = null;
@@ -20,14 +20,14 @@ class mysqlDB implements DataBaseInterface{
         JDBC_DRIVER = "com.mysql.jdbc.Driver";
     }
 
-    public void connectDB() {
+    void connectDB() {
         try{
             Class.forName(JDBC_DRIVER);
 
-            System.out.println("Connecting to a selected database...");
+            System.out.println("Connecting to a selected database... (MySQL)");
             String DB_URL = "jdbc:mysql://localhost:3306/" + db;
             conn = DriverManager.getConnection(DB_URL, USER, PASS);
-            System.out.println("Connected database successfully...");
+            System.out.println("Connected database successfully... (MySQL)");
         }catch(SQLException se){
             //Handle errors for JDBC
             System.out.println("Data Base connection error: " + se);
@@ -36,26 +36,25 @@ class mysqlDB implements DataBaseInterface{
         }
     }
 
-    public void insertIntoTableDB(String model, String engine, int count){
-        String sql = null;
+    void insertIntoTableDB(String model, String engine, int count){
         try{
             System.out.println("Inserting [" + count + "] records into the car table");
             stmt = conn.createStatement();
-                sql = "INSERT INTO car(model, engine) " +
-                        "VALUES ('" + model + "', '" + engine + "')";
-                stmt.executeUpdate(sql);
+            String sql = "INSERT INTO car(model, engine) " +
+                    "VALUES ('" + model + "', '" + engine + "')";
+            stmt.executeUpdate(sql);
             System.out.println("Inserted record [" + count + "] into the car table...\n");
 
         }catch(SQLException se){
             //Handle errors for JDBC
-            se.printStackTrace();
+            System.out.println("Data Base connection error: " + se);
         }catch(Exception e){
             //Handle errors for Class.forName
             e.printStackTrace();
         }//end try
     }
 
-    public void insertIntoTableDB(String name, int id_car, int count){
+    void insertIntoTableDB(String name, int id_car, int count){
         String sql = null;
 
         try{
@@ -74,35 +73,32 @@ class mysqlDB implements DataBaseInterface{
 
         }catch(SQLException se){
             //Handle errors for JDBC
-            se.printStackTrace();
+            System.out.println("Data Base connection error: " + se);
         }catch(Exception e){
             //Handle errors for Class.forName
             e.printStackTrace();
         }//end try
     }
 
-    public void resetDB(){
+    void resetDB(){
         try{
-            System.out.println("Reseting table..");
+            System.out.println("Reseting table... (MySQL)");
             stmt = conn.createStatement();
 
-            String sql = "TRUNCATE car";
+            String sql = "TRUNCATE car, master";
             stmt.executeUpdate(sql);
-
-            sql = "TRUNCATE master";
-            stmt.executeUpdate(sql);
-            System.out.println("Table reseted!\n");
+            System.out.println("Table reseted! (MySQL)\n");
 
         }catch(SQLException se){
             //Handle errors for JDBC
-            se.printStackTrace();
+            System.out.println("Data Base connection error: " + se);
         }catch(Exception e){
             //Handle errors for Class.forName
             e.printStackTrace();
         }
     }
 
-    public void selectRecordTableDB(){
+    void selectRecordTableDB(){
         try{
             System.out.println("Selecting row..");
             stmt = conn.createStatement();
@@ -126,15 +122,15 @@ class mysqlDB implements DataBaseInterface{
 
         }catch(SQLException se){
             //Handle errors for JDBC
-            se.printStackTrace();
+            System.out.println("Data Base connection error: " + se);
         }catch(Exception e){
             //Handle errors for Class.forName
             e.printStackTrace();
         }
     }
 
-    public void endConDB(){
-        System.out.println("Closing connection...");
+    private void endConDB(){
+        System.out.println("Closing connection... (MySQL)");
         try{
             if(stmt!=null)
                 conn.close();
@@ -144,34 +140,34 @@ class mysqlDB implements DataBaseInterface{
             if(conn!=null)
                 conn.close();
         }catch(SQLException se){
-            se.printStackTrace();
+            System.out.println("Data Base connection error: " + se);
         }
-        System.out.println("Connection closed.");
+        System.out.println("Connection closed! (MySQL)");
     }
 
-    public void dropTableDB(){
+    private void dropTableDB(String table1, String table2){
         try{
-            System.out.println("Droping tables..");
+            System.out.println("Droping tables... (MySQL)");
             stmt = conn.createStatement();
 
-            String sql = "DROP TABLE master";
+            String sql = "DROP TABLE " + table1;
             stmt.executeUpdate(sql);
-            sql = "DROP TABLE car";
+            sql = "DROP TABLE " + table2;
             stmt.executeUpdate(sql);
-            System.out.println("Tables Droped!\n");
+            System.out.println("Tables Droped! (MySQL)\n");
 
         }catch(SQLException se){
             //Handle errors for JDBC
-            se.printStackTrace();
+            System.out.println("Data Base connection error: " + se);
         }catch(Exception e){
             //Handle errors for Class.forName
             e.printStackTrace();
         }
     }
 
-    public void createTableDB(){
+    private void createTableDB(){
         try{
-            System.out.println("Creating table \"car\"..");
+            System.out.println("Creating table \"car\" ... (MySQL)");
             stmt = conn.createStatement();
             String sql = "CREATE TABLE car\n" +
                     "(\n" +
@@ -181,23 +177,22 @@ class mysqlDB implements DataBaseInterface{
                     "  PRIMARY KEY (id)\n" +
                     ")";
             stmt.executeUpdate(sql);
-            System.out.println("Table \"car\" created!\n");
+            System.out.println("Table \"car\" created! (MySQL)\n");
 
-            System.out.println("Creating table \"master\"..");
+            System.out.println("Creating table \"master\"... (MySQL)");
             sql = "CREATE TABLE master\n" +
                     "(\n" +
-                    "  id int NOT NULL AUTO_INCREMENT,\n" +
-                    "  name VARCHAR(225),\n" +
-                    "  id_car INT NOT NULL ,\n" +
+                    "  id     SERIAL NOT NULL,\n" +
+                    "  name   VARCHAR(225),\n" +
                     "  PRIMARY KEY (id),\n" +
-                    "  FOREIGN KEY (id_car) REFERENCES car(id)\n" +
+                    "  id_car INTEGER REFERENCES car\n" +
                     ")";
             stmt.executeUpdate(sql);
-            System.out.println("Table \"master\" created!\n");
+            System.out.println("Table \"master\" created! (MySQL)\n");
 
         }catch(SQLException se){
             //Handle errors for JDBC
-            se.printStackTrace();
+            System.out.println("Data Base connection error: " + se);
         }catch(Exception e){
             //Handle errors for Class.forName
             e.printStackTrace();

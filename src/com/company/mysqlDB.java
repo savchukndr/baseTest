@@ -43,7 +43,6 @@ class mysqlDB{
             String sql = "INSERT INTO car(model, engine) " +
                     "VALUES ('" + model + "', '" + engine + "')";
             stmt.executeUpdate(sql);
-            System.out.println("Inserted record [" + count + "] into the car table...\n");
 
         }catch(SQLException se){
             //Handle errors for JDBC
@@ -52,6 +51,7 @@ class mysqlDB{
             //Handle errors for Class.forName
             e.printStackTrace();
         }//end try
+        System.out.println("Inserted record [" + count + "] into the car table...\n");
     }
 
     void insertIntoTableDB(String name, int id_car, int count){
@@ -129,7 +129,7 @@ class mysqlDB{
         }
     }
 
-    private void endConDB(){
+    void endConDB(){
         System.out.println("Closing connection... (MySQL)");
         try{
             if(stmt!=null)
@@ -145,7 +145,7 @@ class mysqlDB{
         System.out.println("Connection closed! (MySQL)");
     }
 
-    private void dropTableDB(String table1, String table2){
+    void dropTableDB(String table1, String table2){
         try{
             System.out.println("Droping tables... (MySQL)");
             stmt = conn.createStatement();
@@ -165,7 +165,7 @@ class mysqlDB{
         }
     }
 
-    private void createTableDB(){
+    void createTableDB(){
         try{
             System.out.println("Creating table \"car\" ... (MySQL)");
             stmt = conn.createStatement();

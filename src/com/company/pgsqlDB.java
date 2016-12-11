@@ -21,7 +21,7 @@ class pgsqlDB {
         JDBC_DRIVER = "org.postgresql.Driver";
     }
 
-    public void connectDB(){
+    void connectDB(){
         try{
             Class.forName(JDBC_DRIVER);
 
@@ -37,14 +37,36 @@ class pgsqlDB {
     }
 
     public void insertIntoTableDB(String model, String engine, int count){
+        try{
+            System.out.println("Inserting [" + count + "] records into the car table");
+            stmt = conn.createStatement();
 
+            String sql = "INSERT INTO car(model, engine) VALUES('" + model + "', '" + engine + "');";
+            stmt.executeUpdate(sql);
+
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+        System.out.println("Inserted record [" + count + "] into the car table...\n");
     }
 
     public void insertIntoTableDB(String name, int id_car, int count){
+        try{
+            System.out.println("Inserting [" + count + "] records into the master table");
+            stmt = conn.createStatement();
 
+            String sql = "INSERT INTO master(name, id_car) VALUES('" + name + "', " + id_car + ")";
+            stmt.executeUpdate(sql);
+
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+        System.out.println("Inserted record [" + count + "] into the master table...\n");
     }
 
-    public void resetDB(){
+    void resetDB(){
         try{
             System.out.println("Reseting table... (PostgreSQL)");
             stmt = conn.createStatement();
@@ -66,8 +88,34 @@ class pgsqlDB {
         System.out.println("Table reseted! (PostgreSQL)\n");
     }
 
-    public void selectRecordTableDB(){
+    void selectRecordTableDB(){
+        try{
+            System.out.println("Selecting row..");
+            stmt = conn.createStatement();
 
+            String sql = "SELECT name, model, engine FROM car, master WHERE master.id_car = car.id";
+            ResultSet rs = stmt.executeQuery(sql);
+            //STEP 5: Extract data from result set
+            while(rs.next()){
+                //Retrieve by column name
+                String name  = rs.getString("name");
+                String model = rs.getString("model");
+                String engine = rs.getString("engine");
+
+                //Display values
+                System.out.print("Name: " + name);
+                System.out.print(", Model: " + model);
+                System.out.print(", Engine: " + engine);
+                System.out.println();
+            }
+            rs.close();
+
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+
+        System.out.println("Table reseted! (PostgreSQL)\n");
     }
 
     public void endConDB(){

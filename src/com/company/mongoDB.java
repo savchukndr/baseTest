@@ -3,15 +3,16 @@ package com.company;
 import com.mongodb.*;
 
 import java.sql.DriverManager;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created by savch on 12.12.2016.
  * All rights is okey =)
  */
 class mongoDB implements DataBaseInterface{
-    DB db;
-    MongoClient mongo;
+    private DB db;
+    private static List<BasicDBObject> lstDBOdbj;
+    private Random randomGenerator = new Random();
 
     mongoDB(){
     }
@@ -20,7 +21,7 @@ class mongoDB implements DataBaseInterface{
         try{
 
             // To connect to mongodb server
-            mongo = new MongoClient("localhost", 27017);
+            MongoClient mongo = new MongoClient("localhost", 27017);
             db = mongo.getDB("TestMDB");
             System.out.println("Connect to database successfully");
 
@@ -64,58 +65,52 @@ class mongoDB implements DataBaseInterface{
         }
     }
 
+    static void fillCar(){
+        String randomModels, randomEngines, Model , Engine;
+        int id_car = 1,idx, idx1;
+        lstDBOdbj = new ArrayList<>();
+
+        /*idx = new Random().nextInt(models.length - 1) + 1;
+        idx1 = new Random().nextInt(engines.length - 1) + 1;
+        randomModels = (models[idx]);
+        randomEngines = (engines[idx1]);*/
+
+        /*id_car = rn.nextInt(28 - 1) + 1;
+        idSet.remove(28);*/
+        for(int i=1; i < models.length; i++) {
+            for (int j=1; j < engines.length; j++) {
+                Model = models[i];
+                Engine = engines[j];
+                lstDBOdbj.add(new BasicDBObject("_id", id_car).
+                        append("model", Model).
+                        append("engine", Engine));
+                id_car++;
+            }
+        }
+    }
+
+    private BasicDBObject anyBasicDBObj()
+    {
+        fillCar();
+        int index = randomGenerator.nextInt(lstDBOdbj.size() - 1) + 1;
+        //System.out.println("Managers choice this week" + item + "our recommendation to you");
+        return lstDBOdbj.get(index);
+    }
+
     void insertDoc(int n){
-        int idx, idx1, id_car;//, countCar = 1;
-        String randomModels, randomEngines, name;
-        Random rn = new Random();
-        /*for(int i=1; i <= n/2; i++) {
-            name = "Name" + String.valueOf(i);
-            id_car = rn.nextInt(n - 1) + 1;
-            DBCollection coll = db.getCollection("master");
-            System.out.println("Collection \"master\" selected successfully");
-
-            BasicDBObject docMaster = new BasicDBObject("_id", i).
-                    append("name", name).
-                    append("id_car", id_car);
-
-            coll.insert(docMaster);
-            System.out.println("Document inserted successfully into \"masterr\"");
-        }*/
+        String name;
         DBCollection coll = db.getCollection("master");
         System.out.println("Collection \"master\" selected successfully");
 
         for(int i=1; i <= n/2; i++) {
-            idx = new Random().nextInt(models.length - 1) + 1;
-            idx1 = new Random().nextInt(engines.length - 1) + 1;
-            randomModels = (models[idx]);
-            randomEngines = (engines[idx1]);
-
-
-            id_car = rn.nextInt(n - 1) + 1;
-            BasicDBObject docCar = new BasicDBObject("_id", id_car).
-                    append("model", randomModels).
-                    append("engine", randomEngines);
-
             name = "Name" + String.valueOf(i);
             //
             BasicDBObject docMaster = new BasicDBObject("_id", i).
                     append("name", name).
-                    append("car", docCar);
+                    append("car", anyBasicDBObj());
 
             coll.insert(docMaster);
-            System.out.println("Document inserted successfully into \"car\"");
-
-            /*DBObject document1 = new BasicDBObject();
-            document1.put("name", "Kiran");
-            document1.put("age", 20);
-
-            DBObject document2 = new BasicDBObject();
-            document2.put("name", "John");
-
-            List<DBObject> documents = new ArrayList<>();
-            documents.add(document1);
-            documents.add(document2);
-            collection.insert(documents);*/
+            System.out.println("Document inserted successfully into \"master\"");
         }
     }
 }

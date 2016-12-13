@@ -23,7 +23,7 @@ public class Main {
 	    mongoDB obTestMDB = new mongoDB();
 
 	    //--------MySQL------------
-	    obTestDB.connectDB();
+	    /*obTestDB.connectDB();
         //obTestDB.resetDB();
 
         obTestDB.dropTableDB("master", "car");
@@ -48,11 +48,11 @@ public class Main {
 
         time3 = checkTime(startDate2, endDate2);
 
-        obTestDB.endConDB();
+        obTestDB.endConDB();*/
         //-------------------------------
 
         //----------PostgreSQL-----------
-        obTestPGDB.connectDB();
+        /*obTestPGDB.connectDB();
 
         obTestPGDB.resetDB();
 
@@ -82,15 +82,15 @@ public class Main {
         System.out.println("----------PostgreSQL-----------------");
         System.out.println("Insert into car time: " + time4 + " sec (");
         System.out.println("Insert into master time: " + time5 + " sec");
-        System.out.println("Select time: " + time6 + " sec");
+        System.out.println("Select time: " + time6 + " sec");*/
         //-------------------------------
 
 
         //-----------Mongo----------------
-        /*obTestMDB.connectDB();
+        obTestMDB.connectDB();
         //obTestMDB.retreiveCol();
         obTestMDB.createCol();
-        obTestMDB.insertDoc(amountOfRaws);*/
+        obTestMDB.insertDoc(amountOfRaws);
         //--------------------------------
     }
 }

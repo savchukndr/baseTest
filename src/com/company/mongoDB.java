@@ -66,17 +66,9 @@ class mongoDB implements DataBaseInterface{
     }
 
     static void fillCar(){
-        String randomModels, randomEngines, Model , Engine;
-        int id_car = 1,idx, idx1;
+        String Model , Engine;
+        int id_car = 11;
         lstDBOdbj = new ArrayList<>();
-
-        /*idx = new Random().nextInt(models.length - 1) + 1;
-        idx1 = new Random().nextInt(engines.length - 1) + 1;
-        randomModels = (models[idx]);
-        randomEngines = (engines[idx1]);*/
-
-        /*id_car = rn.nextInt(28 - 1) + 1;
-        idSet.remove(28);*/
         for(int i=1; i < models.length; i++) {
             for (int j=1; j < engines.length; j++) {
                 Model = models[i];
@@ -93,7 +85,6 @@ class mongoDB implements DataBaseInterface{
     {
         fillCar();
         int index = randomGenerator.nextInt(lstDBOdbj.size() - 1) + 1;
-        //System.out.println("Managers choice this week" + item + "our recommendation to you");
         return lstDBOdbj.get(index);
     }
 
@@ -110,7 +101,18 @@ class mongoDB implements DataBaseInterface{
                     append("car", anyBasicDBObj());
 
             coll.insert(docMaster);
-            System.out.println("Document inserted successfully into \"master\"");
+            System.out.println("Document [" + i + "] inserted successfully into \"master\"");
         }
+    }
+
+    void dropColl(){
+        try{
+            DBCollection coll = db.getCollection("master");
+            coll.drop();
+
+        }catch(Exception e){
+            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+        }
+        System.out.println("Collection \"master\" droped successfully!");
     }
 }

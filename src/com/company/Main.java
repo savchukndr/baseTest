@@ -89,6 +89,7 @@ public class Main {
         //-----------Mongo----------------
         obTestMDB.connectDB();
         //obTestMDB.retreiveCol();
+        obTestMDB.dropColl();
         obTestMDB.createCol();
         obTestMDB.insertDoc(amountOfRaws);
         //--------------------------------

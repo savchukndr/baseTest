@@ -5,66 +5,6 @@ import java.util.Random;
 import java.util.Date;
 
 public class Main {
-    private static String models[] = {"KIA", "Mersedes", "Ferarri", "Honda", "Hundai", "Tesla",
-            "Lada", "Tavria"};
-    private static String engines[] = {"v10", "v12", "v6", "v4", "govno"};
-
-
-    private static void insertData(mysqlDB ob, String tableName, int n){
-        int idx, idx1, id_car;//, countCar = 1;
-        String randomModels, randomEngines, name;
-        Random rn = new Random();
-
-        switch (tableName) {
-            case "car":
-                for(int i=1; i <= n; i++) {
-                    idx = new Random().nextInt(models.length - 1) + 1;
-                    idx1 = new Random().nextInt(engines.length - 1) + 1;
-                    randomModels = (models[idx]);
-                    randomEngines = (engines[idx1]);
-                    ob.insertIntoTableDB(randomModels, randomEngines, i);
-                    //countCar++;
-                }
-                break;
-            case "master":
-                for(int i=1; i <= n/2; i++) {
-                    name = "Name" + String.valueOf(i);
-                    id_car = rn.nextInt(n);
-                    ob.insertIntoTableDB(name, id_car, i);
-                }
-                break;
-            default:
-                throw new IllegalArgumentException(tableName);
-        }
-    }
-
-    private static void insertData(pgsqlDB ob, String tableName, int n){
-        int idx, idx1, id_car;//, countCar = 1;
-        String randomModels, randomEngines, name;
-        Random rn = new Random();
-
-        switch (tableName) {
-            case "car":
-                for(int i=1; i <= n; i++) {
-                    idx = new Random().nextInt(models.length - 1) + 1;
-                    idx1 = new Random().nextInt(engines.length - 1) + 1;
-                    randomModels = (models[idx]);
-                    randomEngines = (engines[idx1]);
-                    ob.insertIntoTableDB(randomModels, randomEngines, i);
-                    //countCar++;
-                }
-                break;
-            case "master":
-                for(int i=1; i <= n/2; i++) {
-                    name = "Name" + String.valueOf(i);
-                    id_car = rn.nextInt(n);
-                    ob.insertIntoTableDB(name, id_car, i);
-                }
-                break;
-            default:
-                throw new IllegalArgumentException(tableName);
-        }
-    }
 
     private static double checkTime(Date ob1, Date ob2){
         long msElapsedTime;
@@ -76,9 +16,11 @@ public class Main {
 
     public static void main(String[] args) {
         double time1, time2, time3, time4, time5, time6;
+        int amountOfRaws = 100;
 
         mysqlDB obTestDB = new mysqlDB("TestDB", "savchukndr", "savchukao22");
 	    pgsqlDB obTestPGDB = new pgsqlDB("postgres", "savchukndr", "savchukao22");
+	    mongoDB obTestMDB = new mongoDB();
 
 	    //--------MySQL------------
 	    obTestDB.connectDB();
@@ -89,13 +31,13 @@ public class Main {
         obTestDB.createTableDB();
 
         Date startDate = new Date();
-        insertData(obTestDB, "car", 10000);
+        obTestDB.insertData(obTestDB, "car", amountOfRaws);
         Date endDate = new Date();
 
         time1 = checkTime(startDate, endDate);
 
         Date startDate1 = new Date();
-        insertData(obTestDB, "master", 10000);
+        obTestDB.insertData(obTestDB, "master", amountOfRaws);
         Date endDate1 = new Date();
 
         time2 = checkTime(startDate1, endDate1);
@@ -115,13 +57,13 @@ public class Main {
         obTestPGDB.resetDB();
 
         Date startDate3 = new Date();
-        insertData(obTestPGDB, "car", 10000);
+        obTestPGDB.insertData(obTestPGDB, "car", amountOfRaws);
         Date endDate3 = new Date();
 
         time4 = checkTime(startDate3, endDate3);
 
         Date startDate4 = new Date();
-        insertData(obTestPGDB, "master", 10000);
+        obTestPGDB.insertData(obTestPGDB, "master", amountOfRaws);
         Date endDate4 = new Date();
 
         time5 = checkTime(startDate4, endDate4);
@@ -132,6 +74,7 @@ public class Main {
 
         time6 = checkTime(startDate5, endDate5);
 
+        System.out.println("----------MySQL-----------------");
         System.out.println("Insert into car time: " + time1 + " sec");
         System.out.println("Insert into master time: " + time2 + " sec");
         System.out.println("Select time: " + time3 + " sec");
@@ -142,5 +85,12 @@ public class Main {
         System.out.println("Select time: " + time6 + " sec");
         //-------------------------------
 
+
+        //-----------Mongo----------------
+        /*obTestMDB.connectDB();
+        //obTestMDB.retreiveCol();
+        obTestMDB.createCol();
+        obTestMDB.insertDoc(amountOfRaws);*/
+        //--------------------------------
     }
 }

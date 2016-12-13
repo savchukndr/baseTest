@@ -1,23 +1,22 @@
 package com.company;
 
 import java.sql.*;
+import java.util.Random;
 
 /**
  * Created by savch on 10.12.2016.
  * Yoj
  */
-class pgsqlDB {
-    private String db = null;
-    private String USER = null;
-    private String PASS = null;
-    private String JDBC_DRIVER = null;
-    private Connection conn = null;
+class pgsqlDB extends mysqlDB implements DataBaseInterface{
     private Statement stmt = null;
+    private Connection conn = null;
+    private String JDBC_DRIVER = null;
 
     pgsqlDB(String db, String USER, String PASS){
-        this.db = db;
+       /* this.db = db;
         this.USER = USER;
-        this.PASS = PASS;
+        this.PASS = PASS;*/
+        super(db, USER, PASS);
         JDBC_DRIVER = "org.postgresql.Driver";
     }
 
@@ -122,40 +121,37 @@ class pgsqlDB {
 
     }
 
-   /* public void dropTableDB(){
+    void insertData(pgsqlDB ob, String tableName, int n){
+        int idx, idx1, id_car, k = 1;//, countCar = 1;
+        String Model , Engine, name;
+        Random rn = new Random();
 
-    }*/
-
-   /* public void createTableDB(){
-        try{
-
-            System.out.println("Create table \"car\"... (PostgreSQL)");
-            stmt = conn.createStatement();
-            String sql = "CREATE TABLE car\n" +
-                    "(\n" +
-                    "  id SERIAL NOT NULL,\n" +
-                    "  model VARCHAR(225),\n" +
-                    "  engine VARCHAR(225),\n" +
-                    "  PRIMARY KEY (id)\n" +
-                    ")";
-            stmt.executeUpdate(sql);
-            System.out.println("Table \"car\" created! (PostgreSQL)\n");
-
-            System.out.println("Creating table \"master\"... (PostgreSQL)");
-            sql = "CREATE TABLE master\n" +
-                    "(\n" +
-                    "  id     SERIAL NOT NULL,\n" +
-                    "  name   VARCHAR(225),\n" +
-                    "  PRIMARY KEY (id),\n" +
-                    "  id_car INTEGER REFERENCES car\n" +
-                    ")";
-            stmt.executeUpdate(sql);
-            System.out.println("Table \"master\" created! (PostgreSQL)\n");
-
-        } catch ( Exception e ) {
-            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
-            System.exit(0);
+        switch (tableName) {
+            case "car":
+                for(int i=1; i < models.length; i++) {
+                    for(int j=1; j < engines.length; j++) {
+                    /*idx = new Random().nextInt(models.length - 1) + 1;
+                    idx1 = new Random().nextInt(engines.length - 1) + 1;
+                    randomModels = (models[idx]);
+                    randomEngines = (engines[idx1]);*/
+                        Model = models[i];
+                        Engine = engines[j];
+                        ob.insertIntoTableDB(Model, Engine, k);
+                        //countCar++;
+                        k++;
+                    }
+                }
+                break;
+            case "master":
+                for(int i=1; i <= n/2; i++) {
+                    name = "Name" + String.valueOf(i);
+                    id_car = rn.nextInt(28 - 1) + 1;
+                    ob.insertIntoTableDB(name, id_car, i);
+                }
+                break;
+            default:
+                throw new IllegalArgumentException(tableName);
         }
-        System.out.println("Connected database successfully...");
-    }*/
+    }
+
 }

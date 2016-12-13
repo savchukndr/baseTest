@@ -6,19 +6,9 @@ package com.company;
  */
 interface DataBaseInterface {
 
-    void connectDB();
+    String models[] = {"KIA", "Mersedes", "Ferarri", "Honda", "Hundai", "Tesla",
+            "Lada", "Tavria"};
+    String engines[] = {"v10", "v12", "v6", "v4", "govno"};
 
-    void insertIntoTableDB(String model, String engine, int count);
 
-    void insertIntoTableDB(String name, int id_car, int count);
-
-    void resetDB();
-
-    void selectRecordTableDB();
-
-    void endConDB();
-
-    void dropTableDB(String table1, String table2);
-
-    void createTableDB();
 }

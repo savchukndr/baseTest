@@ -1,14 +1,17 @@
 package com.company;
+import com.sun.xml.internal.ws.api.pipe.Engine;
+
 import java.sql.*;
+import java.util.Random;
 
 /**
  * Created by savch on 08.12.2016.
  * Yoj
  */
-class mysqlDB{
-    private String db = null;
-    private String USER = null;
-    private String PASS = null;
+class mysqlDB implements DataBaseInterface{
+    String db = null;
+    String USER = null;
+    String PASS = null;
     private String JDBC_DRIVER = null;
     private Connection conn = null;
     private Statement stmt = null;
@@ -36,26 +39,23 @@ class mysqlDB{
         }
     }
 
-    void insertIntoTableDB(String model, String engine, int count){
+    public void insertIntoTableDB(String model, String engine, int count){
         try{
             System.out.println("Inserting [" + count + "] records into the car table");
             stmt = conn.createStatement();
-            String sql = "INSERT INTO car(model, engine) " +
-                    "VALUES ('" + model + "', '" + engine + "')";
+
+            String sql = "INSERT INTO car(model, engine) VALUES('" + model + "', '" + engine + "');";
             stmt.executeUpdate(sql);
 
-        }catch(SQLException se){
-            //Handle errors for JDBC
-            System.out.println("Data Base connection error: " + se);
-        }catch(Exception e){
-            //Handle errors for Class.forName
-            e.printStackTrace();
-        }//end try
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
         System.out.println("Inserted record [" + count + "] into the car table...\n");
     }
 
     void insertIntoTableDB(String name, int id_car, int count){
-        String sql = null;
+        String sql;
 
         try{
             System.out.println("Inserting [" + count + "] record into the master table");
@@ -85,7 +85,7 @@ class mysqlDB{
             System.out.println("Reseting table... (MySQL)");
             stmt = conn.createStatement();
 
-            String sql = "TRUNCATE car, master";
+            String sql = "TRUNCATE car,master";
             stmt.executeUpdate(sql);
             System.out.println("Table reseted! (MySQL)\n");
 
@@ -185,8 +185,7 @@ class mysqlDB{
                     "  id     SERIAL NOT NULL,\n" +
                     "  name   VARCHAR(225),\n" +
                     "  PRIMARY KEY (id),\n" +
-                    "  id_car INTEGER REFERENCES car\n" +
-                    ")";
+                    "  id_car INTEGER REFERENCES car)";
             stmt.executeUpdate(sql);
             System.out.println("Table \"master\" created! (MySQL)\n");
 
@@ -196,6 +195,39 @@ class mysqlDB{
         }catch(Exception e){
             //Handle errors for Class.forName
             e.printStackTrace();
+        }
+    }
+
+    void insertData(mysqlDB ob, String tableName, int n){
+        int idx, idx1, id_car, k = 1;//, countCar = 1;
+        String Model , Engine, name;
+        Random rn = new Random();
+
+        switch (tableName) {
+            case "car":
+                for(int i=1; i < models.length; i++) {
+                    for(int j=1; j < engines.length; j++) {
+                    /*idx = new Random().nextInt(models.length - 1) + 1;
+                    idx1 = new Random().nextInt(engines.length - 1) + 1;
+                    randomModels = (models[idx]);
+                    randomEngines = (engines[idx1]);*/
+                        Model = models[i];
+                        Engine = engines[j];
+                        ob.insertIntoTableDB(Model, Engine, k);
+                        //countCar++;
+                        k++;
+                    }
+                }
+                break;
+            case "master":
+                for(int i=1; i <= n/2; i++) {
+                    name = "Name" + String.valueOf(i);
+                    id_car = rn.nextInt(28 - 1) + 1;
+                    ob.insertIntoTableDB(name, id_car, i);
+                }
+                break;
+            default:
+                throw new IllegalArgumentException(tableName);
         }
     }
 }

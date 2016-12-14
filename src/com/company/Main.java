@@ -15,15 +15,15 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        double time1, time2, time3, time4, time5, time6;
-        int amountOfRaws = 100;
+        double time1, time2, time3, time4, time5, time6, time7, time8;
+        int amountOfRaws = 10000;
 
         mysqlDB obTestDB = new mysqlDB("TestDB", "savchukndr", "savchukao22");
 	    pgsqlDB obTestPGDB = new pgsqlDB("postgres", "savchukndr", "savchukao22");
 	    mongoDB obTestMDB = new mongoDB();
 
 	    //--------MySQL------------
-	    /*obTestDB.connectDB();
+	    obTestDB.connectDB();
         //obTestDB.resetDB();
 
         obTestDB.dropTableDB("master", "car");
@@ -48,11 +48,11 @@ public class Main {
 
         time3 = checkTime(startDate2, endDate2);
 
-        obTestDB.endConDB();*/
+        obTestDB.endConDB();
         //-------------------------------
 
         //----------PostgreSQL-----------
-        /*obTestPGDB.connectDB();
+        obTestPGDB.connectDB();
 
         obTestPGDB.resetDB();
 
@@ -74,6 +74,24 @@ public class Main {
 
         time6 = checkTime(startDate5, endDate5);
 
+        //-----------------MongoDB------------------
+        obTestMDB.connectDB();
+        obTestMDB.dropColl();
+        obTestMDB.createCol();
+
+        Date startDate6 = new Date();
+        obTestMDB.insertDoc(amountOfRaws);
+        Date endDate6 = new Date();
+
+        time7 = checkTime(startDate6, endDate6);
+
+        Date startDate7 = new Date();
+        obTestMDB.retreiveCol();
+        Date endDate7 = new Date();
+
+        time8 = checkTime(startDate7, endDate7);
+        //------------------------------------------
+
         System.out.println("----------MySQL-----------------");
         System.out.println("Insert into car time: " + time1 + " sec");
         System.out.println("Insert into master time: " + time2 + " sec");
@@ -82,16 +100,12 @@ public class Main {
         System.out.println("----------PostgreSQL-----------------");
         System.out.println("Insert into car time: " + time4 + " sec (");
         System.out.println("Insert into master time: " + time5 + " sec");
-        System.out.println("Select time: " + time6 + " sec");*/
+        System.out.println("Select time: " + time6 + " sec");
+
+        System.out.println("--------------MongoDB-----------------");
+        System.out.println("Insert document time: " + time7 + " sec (");
+        System.out.println("Retreive document time: " + time8 + " sec");
         //-------------------------------
 
-
-        //-----------Mongo----------------
-        obTestMDB.connectDB();
-        //obTestMDB.retreiveCol();
-        obTestMDB.dropColl();
-        obTestMDB.createCol();
-        obTestMDB.insertDoc(amountOfRaws);
-        //--------------------------------
     }
 }

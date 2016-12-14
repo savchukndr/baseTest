@@ -35,10 +35,12 @@ class mongoDB implements DataBaseInterface{
     void retreiveCol(){
         try{
 
-            DBCollection coll = db.getCollection("car");
+            DBCollection coll = db.getCollection("master");
             System.out.println("Collection car selected successfully");
+            BasicDBObject query = new BasicDBObject().append("name", 1).append("car.model", 1).append("car.engine", 1);
+            BasicDBObject field = new BasicDBObject();
 
-            DBCursor cursor = coll.find();
+            DBCursor cursor = coll.find(field, query);
             int i = 1;
 
             while (cursor.hasNext()) {

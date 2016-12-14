@@ -7,8 +7,8 @@ package com.company;
 interface DataBaseInterface {
 
     String models[] = {"KIA", "Mersedes", "Ferarri", "Honda", "Hundai", "Tesla",
-            "Lada", "Tavria"};
-    String engines[] = {"v10", "v12", "v6", "v4", "govno"};
+            "Lada", "Tavria", "Warszawa"};
+    String engines[] = {"v10", "v12", "v6", "v4", "v300", "sava"};
 
 
 }

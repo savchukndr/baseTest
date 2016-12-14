@@ -11,6 +11,7 @@ class pgsqlDB extends mysqlDB implements DataBaseInterface{
     private Statement stmt = null;
     private Connection conn = null;
     private String JDBC_DRIVER = null;
+    private int k = 1;
 
     pgsqlDB(String db, String USER, String PASS){
        /* this.db = db;
@@ -122,7 +123,7 @@ class pgsqlDB extends mysqlDB implements DataBaseInterface{
     }
 
     void insertData(pgsqlDB ob, String tableName, int n){
-        int idx, idx1, id_car, k = 1;//, countCar = 1;
+        int idx, idx1, id_car;//, countCar = 1;
         String Model , Engine, name;
         Random rn = new Random();
 
@@ -143,9 +144,10 @@ class pgsqlDB extends mysqlDB implements DataBaseInterface{
                 }
                 break;
             case "master":
+                k = k - 1;
                 for(int i=1; i <= n/2; i++) {
                     name = "Name" + String.valueOf(i);
-                    id_car = rn.nextInt(28 - 1) + 1;
+                    id_car = rn.nextInt(k - 1) + 1;
                     ob.insertIntoTableDB(name, id_car, i);
                 }
                 break;

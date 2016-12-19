@@ -21,7 +21,8 @@ public class Main {
         mysqlDB obTestDB = new mysqlDB("TestDB", "savchukndr", "savchukao22");
 	    pgsqlDB obTestPGDB = new pgsqlDB("postgres", "savchukndr", "savchukao22");
 	    mongoDB obTestMDB = new mongoDB();
-
+	    redisDB obTestRDB = new redisDB();
+/*
 	    //--------MySQL------------
 	    obTestDB.connectDB();
         //obTestDB.resetDB();
@@ -106,6 +107,7 @@ public class Main {
         System.out.println("Insert document time: " + time7 + " sec (");
         System.out.println("Retreive document time: " + time8 + " sec");
         //-------------------------------
-
+*/
+        obTestRDB.connectDB();
     }
 }

@@ -19,7 +19,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/postgresql-9.4.1212.jre6.jar!/" />
+          <root url="jar://$USER_HOME$/Documents/jars/mongo-java-driver-3.4.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -28,7 +28,16 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/mongo-java-driver-3.4.0.jar!/" />
+          <root url="jar://$USER_HOME$/Documents/jars/postgresql-9.4.1212.jre6.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/Documents/jars/jedis-2.6.2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

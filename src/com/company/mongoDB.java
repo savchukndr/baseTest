@@ -67,7 +67,7 @@ class mongoDB implements DataBaseInterface{
         }
     }
 
-    static void fillCar(){
+    private static void fillCar(){
         String Model , Engine;
         int id_car = 11;
         lstDBOdbj = new ArrayList<>();

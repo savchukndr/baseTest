@@ -144,8 +144,8 @@ class pgsqlDB extends mysqlDB implements DataBaseInterface{
                 }
                 break;
             case "master":
-                k = k - 1;
-                for(int i=1; i <= n/2; i++) {
+                k--;
+                for(int i=1; i <= n; i++) {
                     name = "Name" + String.valueOf(i);
                     id_car = rn.nextInt(k - 1) + 1;
                     ob.insertIntoTableDB(name, id_car, i);

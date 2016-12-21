@@ -15,14 +15,13 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        double time1, time2, time3, time4, time5, time6, time7, time8;
-        int amountOfRaws = 10000;
+        double time1, time2, time3, time4, time5, time6, time7, time8, time9, time10, time11;
+        int amountOfRaws = 10;
 
         mysqlDB obTestDB = new mysqlDB("TestDB", "savchukndr", "savchukao22");
 	    pgsqlDB obTestPGDB = new pgsqlDB("postgres", "savchukndr", "savchukao22");
 	    mongoDB obTestMDB = new mongoDB();
-	    redisDB obTestRDB = new redisDB();
-/*
+	    redisDB obTestRDB = new redisDB(amountOfRaws);
 	    //--------MySQL------------
 	    obTestDB.connectDB();
         //obTestDB.resetDB();
@@ -74,6 +73,7 @@ public class Main {
         Date endDate5 = new Date();
 
         time6 = checkTime(startDate5, endDate5);
+        //-----------------------------------------
 
         //-----------------MongoDB------------------
         obTestMDB.connectDB();
@@ -93,6 +93,30 @@ public class Main {
         time8 = checkTime(startDate7, endDate7);
         //------------------------------------------
 
+        //-----------------Redis---------------------
+        obTestRDB.connectDB();
+
+        obTestRDB.deleteRecord();
+
+        Date startDate8 = new Date();
+        obTestRDB.insertCar();
+        Date endDate8 = new Date();
+
+        time9 = checkTime(startDate8, endDate8);
+
+        Date startDate9 = new Date();
+        obTestRDB.insertMaster();
+        Date endDate9 = new Date();
+
+        time10 = checkTime(startDate9, endDate9);
+
+        Date startDate10 = new Date();
+        obTestRDB.retreiveRecord();
+        Date endDate10 = new Date();
+
+        time11 = checkTime(startDate10, endDate10);
+        //-------------------------------------------
+
         System.out.println("----------MySQL-----------------");
         System.out.println("Insert into car time: " + time1 + " sec");
         System.out.println("Insert into master time: " + time2 + " sec");
@@ -106,8 +130,11 @@ public class Main {
         System.out.println("--------------MongoDB-----------------");
         System.out.println("Insert document time: " + time7 + " sec (");
         System.out.println("Retreive document time: " + time8 + " sec");
+
+         System.out.println("--------------Redis-----------------");
+        System.out.println("Insert redcord into car time: " + time9 + " sec (");
+        System.out.println("Insert redcord into master time: " + time10 + " sec (");
+        System.out.println("Retreive record time: " + time11 + " sec");
         //-------------------------------
-*/
-        obTestRDB.connectDB();
     }
 }

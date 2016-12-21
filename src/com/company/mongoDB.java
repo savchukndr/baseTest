@@ -69,7 +69,7 @@ class mongoDB implements DataBaseInterface{
 
     private static void fillCar(){
         String Model , Engine;
-        int id_car = 11;
+        int id_car = 1;
         lstDBOdbj = new ArrayList<>();
         for(int i=1; i < models.length; i++) {
             for (int j=1; j < engines.length; j++) {
@@ -95,7 +95,7 @@ class mongoDB implements DataBaseInterface{
         DBCollection coll = db.getCollection("master");
         System.out.println("Collection \"master\" selected successfully");
 
-        for(int i=1; i <= n/2; i++) {
+        for(int i=1; i <= n; i++) {
             name = "Name" + String.valueOf(i);
             //
             BasicDBObject docMaster = new BasicDBObject("_id", i).
@@ -103,7 +103,7 @@ class mongoDB implements DataBaseInterface{
                     append("car", anyBasicDBObj());
 
             coll.insert(docMaster);
-            System.out.println("Document [" + i + "] inserted successfully into \"master\"");
+            System.out.println("Document [" + i + "] inserted successfully into \"master\"\n");
         }
     }
 

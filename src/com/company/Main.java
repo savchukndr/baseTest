@@ -3,6 +3,7 @@ import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 
 import java.util.Random;
 import java.util.Date;
+import java.io.*;
 
 public class Main {
 
@@ -14,9 +15,75 @@ public class Main {
         return longObject.doubleValue() * 0.001;
     }
 
+    private static void writeFile(String amountOfRaws, String time, String fileName){
+        //time = time.replace(".", ",");
+        try(FileWriter writer = new FileWriter(fileName, true))
+        {
+            writer.append('\n');
+            String text = amountOfRaws;
+            writer.write(text);
+            writer.append(',');
+            text = time;
+            writer.write(text);
+
+            writer.flush();
+        }
+        catch(IOException ex){
+
+            System.out.println("Error in writeFile" + ex.getMessage());
+        }
+    }
+
+    private static void outputRes(int amountOfRaws, String name, double t1, double t2, double t3){
+        switch (name) {
+            case "PostgreSQL":
+                System.out.println("----------PostgreSQL-----------------");
+                System.out.println("Insert into car time: " + t1 + " sec (");
+                System.out.println("Insert into master time: " + t2 + " sec");
+                System.out.println("Select time: " + t3 + " sec");
+                Main.writeFile(Integer.toString(amountOfRaws), Double.toString(t1 + t2), "C:\\temp\\insertPostgreSql.csv");
+                Main.writeFile(Integer.toString(amountOfRaws), Double.toString(t3), "C:\\temp\\selectMySql.csv");
+                break;
+            case "MySQL":
+                System.out.println("----------MySQL-----------------");
+                System.out.println("Insert into car time: " + t1 + " sec");
+                System.out.println("Insert into master time: " + t2 + " sec");
+                System.out.println("Select time: " + t3 + " sec");
+                Main.writeFile(Integer.toString(amountOfRaws), Double.toString(t1 + t2), "C:\\temp\\insertMySql.csv");
+                Main.writeFile(Integer.toString(amountOfRaws), Double.toString(t3), "C:\\temp\\selectMySql.csv");
+                break;
+            case "Redis":
+                System.out.println("--------------Redis-----------------");
+                System.out.println("Insert redcord into car time: " + t1 + " sec (");
+                System.out.println("Insert redcord into master time: " + t2 + " sec (");
+                System.out.println("Retreive record time: " + t3 + " sec");
+                Main.writeFile(Integer.toString(amountOfRaws), Double.toString(t1 + t2), "C:\\temp\\insertRedis.csv");
+                Main.writeFile(Integer.toString(amountOfRaws), Double.toString(t3), "C:\\temp\\retreiveRedis.csv");
+                break;
+            default:
+                System.out.println("No such db.");
+                break;
+        }
+    }
+
+    private static void outputRes(int amountOfRaws, String name, double t1, double t3){
+        switch (name){
+            case "MongoDB":
+                System.out.println("--------------MongoDB-----------------");
+                System.out.println("Insert document time: " + t1 + " sec (");
+                System.out.println("Retreive document time: " + t3 + " sec");
+                Main.writeFile(Integer.toString(amountOfRaws), Double.toString(t1), "C:\\temp\\insertMongo.csv");
+                Main.writeFile(Integer.toString(amountOfRaws), Double.toString(t3), "C:\\temp\\retreiveMongo.csv");
+                break;
+            default:
+                System.out.println("No such db.");
+        }
+
+    }
+
     public static void main(String[] args) {
         double time1, time2, time3, time4, time5, time6, time7, time8, time9, time10, time11;
-        int amountOfRaws = 10;
+        int amountOfRaws = 1000;
 
         mysqlDB obTestDB = new mysqlDB("TestDB", "savchukndr", "savchukao22");
 	    pgsqlDB obTestPGDB = new pgsqlDB("postgres", "savchukndr", "savchukao22");
@@ -117,24 +184,11 @@ public class Main {
         time11 = checkTime(startDate10, endDate10);
         //-------------------------------------------
 
-        System.out.println("----------MySQL-----------------");
-        System.out.println("Insert into car time: " + time1 + " sec");
-        System.out.println("Insert into master time: " + time2 + " sec");
-        System.out.println("Select time: " + time3 + " sec");
-
-        System.out.println("----------PostgreSQL-----------------");
-        System.out.println("Insert into car time: " + time4 + " sec (");
-        System.out.println("Insert into master time: " + time5 + " sec");
-        System.out.println("Select time: " + time6 + " sec");
-
-        System.out.println("--------------MongoDB-----------------");
-        System.out.println("Insert document time: " + time7 + " sec (");
-        System.out.println("Retreive document time: " + time8 + " sec");
-
-         System.out.println("--------------Redis-----------------");
-        System.out.println("Insert redcord into car time: " + time9 + " sec (");
-        System.out.println("Insert redcord into master time: " + time10 + " sec (");
-        System.out.println("Retreive record time: " + time11 + " sec");
         //-------------------------------
+
+        Main.outputRes(amountOfRaws, "MySQL", time1, time2, time3);
+        Main.outputRes(amountOfRaws, "PostgreSQL", time4, time5, time6);
+        Main.outputRes(amountOfRaws, "MongoDB", time7, time8);
+        Main.outputRes(amountOfRaws, "Redis", time9, time10, time11);
     }
 }

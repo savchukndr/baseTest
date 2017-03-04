@@ -1,10 +1,10 @@
-package com.company;
+package interfaces;
 
 /**
  * Created by savch on 10.12.2016.
  * Yoj
  */
-interface DataBaseInterface {
+public interface DataBaseInterface {
 
     String models[] = {"KIA", "Mersedes", "Ferarri", "Honda", "Hundai", "Tesla",
             "Lada", "Tavria", "Warszawa"};

@@ -1,5 +1,5 @@
-package com.company;
-import com.sun.xml.internal.ws.api.pipe.Engine;
+package com.company.databases;
+import interfaces.DataBaseInterface;
 
 import java.sql.*;
 import java.util.Random;
@@ -8,7 +8,7 @@ import java.util.Random;
  * Created by savch on 08.12.2016.
  * Yoj
  */
-class mysqlDB implements DataBaseInterface{
+public class mysqlDB implements DataBaseInterface {
     String db = null;
     String USER = null;
     String PASS = null;
@@ -208,10 +208,6 @@ class mysqlDB implements DataBaseInterface{
             case "car":
                 for(int i=1; i < models.length; i++) {
                     for(int j=1; j < engines.length; j++) {
-                    /*idx = new Random().nextInt(models.length - 1) + 1;
-                    idx1 = new Random().nextInt(engines.length - 1) + 1;
-                    randomModels = (models[idx]);
-                    randomEngines = (engines[idx1]);*/
                         Model = models[i];
                         Engine = engines[j];
                         ob.insertIntoTableDB(Model, Engine, k);

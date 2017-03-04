@@ -1,15 +1,15 @@
-package com.company;
+package com.company.databases;
 
+import interfaces.DataBaseInterface;
 import com.mongodb.*;
 
-import java.sql.DriverManager;
 import java.util.*;
 
 /**
  * Created by savch on 12.12.2016.
  * All rights is okey =)
  */
-class mongoDB implements DataBaseInterface{
+public class mongoDB implements DataBaseInterface {
     private DB db;
     private static List<BasicDBObject> lstDBOdbj;
     private Random randomGenerator = new Random();

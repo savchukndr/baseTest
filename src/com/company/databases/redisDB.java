@@ -1,16 +1,20 @@
-package com.company;
+package com.company.databases;
 
 
+import com.company.database_handler.Connector;
+import interfaces.DataBaseInterface;
 import redis.clients.jedis.Jedis;
 
+import java.sql.Connection;
 import java.util.*;
 
 /**
  * Created by savch on 19.12.2016.
  * All rights is okey =)
  */
-class redisDB implements DataBaseInterface{
-    private Jedis jedis;
+public class redisDB implements DataBaseInterface {
+    private Jedis jedis = null;
+    Connector conect = new Connector();
     private Map<String, String> carInfo;
     private Map<String, String> masterInfo;
     private int id_car = 1;
@@ -18,22 +22,20 @@ class redisDB implements DataBaseInterface{
     private int numRow;
     private int counter = 0;
 
-    redisDB(int amountOfRaws){
+    public redisDB(int amountOfRaws){
         numRow = amountOfRaws;
     }
 
-    void connectDB(){
+    public void connectDB(){
         try{
-            jedis = new Jedis("localhost");
-            System.out.println("Connection to server sucessfully");
-            //check whether server is running or not
-            System.out.println("Server is running: " + jedis.ping());
+            conect.connectRD();
+            jedis = conect.getJedis();
         }catch (Exception e){
             System.out.println("Error in Redis is: " + e);
         }
     }
 
-    void insertCar(){
+    public void insertCar(){
         try {
             carInfo = new HashMap<>();
             for(int i=1; i < models.length; i++) {
@@ -52,7 +54,7 @@ class redisDB implements DataBaseInterface{
         }
     }
 
-    void insertMaster(){
+    public void insertMaster(){
         try {
             id_car--;
             masterInfo = new HashMap<>();
@@ -71,7 +73,7 @@ class redisDB implements DataBaseInterface{
     }
 
 
-    void retreiveRecord(){
+    public void retreiveRecord(){
         try {
             String cId, mId;
             String valEng = "", valMod = "", valName = "", resCar = "", tmp;
@@ -113,7 +115,7 @@ class redisDB implements DataBaseInterface{
         }
     }
 
-    void deleteRecord(){
+    public void deleteRecord(){
         try {
             jedis.flushAll();
         }catch (Exception e){

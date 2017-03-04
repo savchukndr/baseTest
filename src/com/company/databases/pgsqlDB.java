@@ -1,4 +1,7 @@
-package com.company;
+package com.company.databases;
+
+import com.company.database_handler.Connector;
+import interfaces.DataBaseInterface;
 
 import java.sql.*;
 import java.util.Random;
@@ -7,28 +10,16 @@ import java.util.Random;
  * Created by savch on 10.12.2016.
  * Yoj
  */
-class pgsqlDB extends mysqlDB implements DataBaseInterface{
+public class pgsqlDB implements DataBaseInterface {
     private Statement stmt = null;
-    private Connection conn = null;
-    private String JDBC_DRIVER = null;
     private int k = 1;
+    Connector conect = new Connector();
+    private Connection connPG = null;
 
-    pgsqlDB(String db, String USER, String PASS){
-       /* this.db = db;
-        this.USER = USER;
-        this.PASS = PASS;*/
-        super(db, USER, PASS);
-        JDBC_DRIVER = "org.postgresql.Driver";
-    }
-
-    void connectDB(){
+    public void connectDB(){
         try{
-            Class.forName(JDBC_DRIVER);
-
-            System.out.println("Connecting to a selected database(PostgreSQL)...");
-            String DB_URL = "jdbc:postgresql://localhost:5432/" + db;
-            conn = DriverManager.getConnection(DB_URL, USER, PASS);
-
+            conect.connectPG();
+            connPG = conect.getConn();
         } catch ( Exception e ) {
             System.err.println( e.getClass().getName()+": "+ e.getMessage() );
             System.exit(0);
@@ -39,7 +30,7 @@ class pgsqlDB extends mysqlDB implements DataBaseInterface{
     public void insertIntoTableDB(String model, String engine, int count){
         try{
             System.out.println("Inserting [" + count + "] records into the car table");
-            stmt = conn.createStatement();
+            stmt = connPG.createStatement();
 
             String sql = "INSERT INTO car(model, engine) VALUES('" + model + "', '" + engine + "');";
             stmt.executeUpdate(sql);
@@ -54,7 +45,7 @@ class pgsqlDB extends mysqlDB implements DataBaseInterface{
     public void insertIntoTableDB(String name, int id_car, int count){
         try{
             System.out.println("Inserting [" + count + "] records into the master table");
-            stmt = conn.createStatement();
+            stmt = connPG.createStatement();
 
             String sql = "INSERT INTO master(name, id_car) VALUES('" + name + "', " + id_car + ")";
             stmt.executeUpdate(sql);
@@ -66,10 +57,10 @@ class pgsqlDB extends mysqlDB implements DataBaseInterface{
         System.out.println("Inserted record [" + count + "] into the master table...\n");
     }
 
-    void resetDB(){
+    public void resetDB(){
         try{
             System.out.println("Reseting table... (PostgreSQL)");
-            stmt = conn.createStatement();
+            stmt = connPG.createStatement();
 
             String sql = "TRUNCATE car, master";
             stmt.executeUpdate(sql);
@@ -88,10 +79,10 @@ class pgsqlDB extends mysqlDB implements DataBaseInterface{
         System.out.println("Table reseted! (PostgreSQL)\n");
     }
 
-    void selectRecordTableDB(){
+    public void selectRecordTableDB(){
         try{
             System.out.println("Selecting row..");
-            stmt = conn.createStatement();
+            stmt = connPG.createStatement();
 
             String sql = "SELECT name, model, engine FROM car, master WHERE master.id_car = car.id";
             ResultSet rs = stmt.executeQuery(sql);
@@ -118,11 +109,7 @@ class pgsqlDB extends mysqlDB implements DataBaseInterface{
         System.out.println("Table reseted! (PostgreSQL)\n");
     }
 
-    public void endConDB(){
-
-    }
-
-    void insertData(pgsqlDB ob, String tableName, int n){
+    public void insertData(pgsqlDB ob, String tableName, int n){
         int idx, idx1, id_car;//, countCar = 1;
         String Model , Engine, name;
         Random rn = new Random();
@@ -131,10 +118,6 @@ class pgsqlDB extends mysqlDB implements DataBaseInterface{
             case "car":
                 for(int i=1; i < models.length; i++) {
                     for(int j=1; j < engines.length; j++) {
-                    /*idx = new Random().nextInt(models.length - 1) + 1;
-                    idx1 = new Random().nextInt(engines.length - 1) + 1;
-                    randomModels = (models[idx]);
-                    randomEngines = (engines[idx1]);*/
                         Model = models[i];
                         Engine = engines[j];
                         ob.insertIntoTableDB(Model, Engine, k);

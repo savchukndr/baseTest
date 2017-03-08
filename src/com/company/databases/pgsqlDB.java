@@ -12,13 +12,31 @@ import java.util.Random;
  */
 public class pgsqlDB implements DataBaseInterface {
     private Statement stmt = null;
-    private int k = 1;
-    Connector conect = new Connector();
+    //private int k = 1;
+    private Connector conect = new Connector();
     private Connection connPG = null;
+    private String resInsertIntoTable = "";
+
+    public Statement getStmt() {
+        return stmt;
+    }
+
+    public Connector getConect() {
+        return conect;
+    }
+
+    public Connection getConnPG() {
+        return connPG;
+    }
+
+    public String getResInsertIntoTable() {
+        return resInsertIntoTable;
+    }
 
     public void connectDB(){
         try{
             conect.connectPG();
+            
             connPG = conect.getConn();
         } catch ( Exception e ) {
             System.err.println( e.getClass().getName()+": "+ e.getMessage() );
@@ -27,9 +45,9 @@ public class pgsqlDB implements DataBaseInterface {
         System.out.println("Connected database successfully...\n");
     }
 
-    public void insertIntoTableDB(String model, String engine, int count){
+    public String insertIntoTableDB(String model, String engine, int count){
         try{
-            System.out.println("Inserting [" + count + "] records into the car table");
+            //System.out.println("Inserting [" + count + "] records into the car table");
             stmt = connPG.createStatement();
 
             String sql = "INSERT INTO car(model, engine) VALUES('" + model + "', '" + engine + "');";
@@ -39,12 +57,13 @@ public class pgsqlDB implements DataBaseInterface {
             System.err.println( e.getClass().getName()+": "+ e.getMessage() );
             System.exit(0);
         }
-        System.out.println("Inserted record [" + count + "] into the car table...\n");
+        //System.out.println("Inserted record [" + count + "] into the car table...\n");
+        return "Inserted record [" + count + "] into the car table...\n";
     }
 
-    public void insertIntoTableDB(String name, int id_car, int count){
+    public String insertIntoTableDB(String name, int id_car, int count){
         try{
-            System.out.println("Inserting [" + count + "] records into the master table");
+            //System.out.println("Inserting [" + count + "] records into the master table");
             stmt = connPG.createStatement();
 
             String sql = "INSERT INTO master(name, id_car) VALUES('" + name + "', " + id_car + ")";
@@ -54,7 +73,8 @@ public class pgsqlDB implements DataBaseInterface {
             System.err.println( e.getClass().getName()+": "+ e.getMessage() );
             System.exit(0);
         }
-        System.out.println("Inserted record [" + count + "] into the master table...\n");
+        //System.out.println("Inserted record [" + count + "] into the master table...\n");
+        return "Inserted record [" + count + "] into the master table...\n";
     }
 
     public void resetDB(){
@@ -79,7 +99,8 @@ public class pgsqlDB implements DataBaseInterface {
         System.out.println("Table reseted! (PostgreSQL)\n");
     }
 
-    public void selectRecordTableDB(){
+    /*public String selectRecordTableDB(){
+        String selectRes = "";
         try{
             System.out.println("Selecting row..");
             stmt = connPG.createStatement();
@@ -93,11 +114,13 @@ public class pgsqlDB implements DataBaseInterface {
                 String model = rs.getString("model");
                 String engine = rs.getString("engine");
 
+                selectRes = "Name: " + name + ", Model: " + model + ", Engine: " + engine;
+
                 //Display values
-                System.out.print("Name: " + name);
+                *//*System.out.print("Name: " + name);
                 System.out.print(", Model: " + model);
                 System.out.print(", Engine: " + engine);
-                System.out.println();
+                System.out.println();*//*
             }
             rs.close();
 
@@ -106,37 +129,7 @@ public class pgsqlDB implements DataBaseInterface {
             System.exit(0);
         }
 
-        System.out.println("Table reseted! (PostgreSQL)\n");
-    }
-
-    public void insertData(pgsqlDB ob, String tableName, int n){
-        int idx, idx1, id_car;//, countCar = 1;
-        String Model , Engine, name;
-        Random rn = new Random();
-
-        switch (tableName) {
-            case "car":
-                for(int i=1; i < models.length; i++) {
-                    for(int j=1; j < engines.length; j++) {
-                        Model = models[i];
-                        Engine = engines[j];
-                        ob.insertIntoTableDB(Model, Engine, k);
-                        //countCar++;
-                        k++;
-                    }
-                }
-                break;
-            case "master":
-                k--;
-                for(int i=1; i <= n; i++) {
-                    name = "Name" + String.valueOf(i);
-                    id_car = rn.nextInt(k - 1) + 1;
-                    ob.insertIntoTableDB(name, id_car, i);
-                }
-                break;
-            default:
-                throw new IllegalArgumentException(tableName);
-        }
-    }
+        return selectRes;
+    }*/
 
 }

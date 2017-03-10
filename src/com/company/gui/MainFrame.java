@@ -3,12 +3,12 @@ package com.company.gui;
 import com.company.database_handler.Connector;
 import com.company.databases.*;
 import interfaces.DataBaseInterface;
+import redis.clients.jedis.Jedis;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.Date;
-import java.util.Random;
+import java.util.*;
 
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
@@ -29,30 +29,47 @@ public class MainFrame extends JFrame implements DataBaseInterface{
     private JRadioButton radioButtonPG, radioButtonRD, radioButtonRDPG;
     private ButtonGroup radioButtonGroup;
     private String choice;
-    private int k = 1, amountOfRaws = 100;
-    private pgsqlDB obTestPGDB = new pgsqlDB();
+    private int k, amountOfRaws;
+    private pgsqlDB obTestPGDB = null;
+    private redisDB obTestRDB = null;
     private double time4, time5, time6, time9, time10, time11;
-    private Connection connPG = null;
     private Statement stmt = null;
+    private ResultFrame resRDFrame;
+    private ResultFrame resPGFrame;
+    private ResultFrame resRDPGFrame;
+    private boolean resRDExist, resPGexist, resRDPGexist;
+
+    private Jedis jedis = null;
+    private Map<String, String> carInfo;
+    private Map<String, String> masterInfo;
+    private int id_car = 1;
+    private Random randomGenerator = new Random();
+    private int counter = 0;
+
 
     public MainFrame(){
         try {
+            obTestPGDB = new pgsqlDB();
+            obTestRDB = new redisDB(amountOfRaws);
+            resPGexist = false;
+            resPGexist = false;
+            resRDPGexist = false;
+            k = 1;
+            amountOfRaws = 100;
             initialize();
-            pgsqlDB obTestPGDB = new pgsqlDB();
         }catch (InterruptedException e){
             System.out.print("Exception: " + e);
         }
     }
 
     private void initialize() throws InterruptedException {
-        //JFrame frame = new JFrame("BaseTest program");
-
         //Frame
         setTitle("Base Test");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
+        setResizable(false);
 
         //Panels
         JPanel panelLeft = new JPanel();
@@ -159,7 +176,7 @@ public class MainFrame extends JFrame implements DataBaseInterface{
         pack();
 
         //ResultWindow
-        //ResultFrame resFrame = new ResultFrame();
+        //r1 = new ResultFrame("PG");
         //resFrame.show();
         //////////////////////////
 
@@ -170,6 +187,22 @@ public class MainFrame extends JFrame implements DataBaseInterface{
         buttonCount.setEnabled(false);
         buttonCencel.setEnabled(true);
         k = 1;
+        if (resPGexist){
+            resPGFrame.dispose();
+            resPGexist = false;
+        }
+        if (resRDExist){
+            resRDFrame.dispose();
+            resPGexist = false;
+        }
+        if (resRDPGexist){
+            resRDPGFrame.dispose();
+            resRDPGexist = false;
+        }
+        //r1.dispose();
+        //resPGFrame.dispose();
+        //resRDPGFrame.dispose();
+        //resRDFrame.dispose();
     }
 
     private void cencelActionPerformed(ActionEvent e){
@@ -214,11 +247,6 @@ public class MainFrame extends JFrame implements DataBaseInterface{
 
                     textArea.append("Name: " + name + ", Model: " + model + ", Engine: " + engine + "\n");
 
-                    //Display values
-                /*System.out.print("Name: " + name);
-                System.out.print(", Model: " + model);
-                System.out.print(", Engine: " + engine);
-                System.out.println();*/
                 }
                 rs.close();
 
@@ -228,7 +256,7 @@ public class MainFrame extends JFrame implements DataBaseInterface{
             }
         }
 
-        public void insertData(pgsqlDB ob, String tableName, int n){
+        void insertData(pgsqlDB ob, String tableName, int n){
             int idx, idx1, id_car;//, countCar = 1;
             String Model , Engine, name;
             Random rn = new Random();
@@ -260,12 +288,93 @@ public class MainFrame extends JFrame implements DataBaseInterface{
             }
         }
 
+        public void insertCar(){
+            try {
+                carInfo = new HashMap<>();
+                for(int i=1; i < models.length; i++) {
+                    for (int j=1; j < engines.length; j++) {
+                        textArea.append("Inserting [" + id_car + "] key-value for cars\n");
+                        carInfo.put("model", models[i]);
+                        carInfo.put("engine", engines[j]);
+                        jedis.hmset("carID:" + id_car, carInfo);
+                        textArea.append("Inserted [" + id_car + "] key-value for cars...\n");
+                        id_car++;
+                        counter++;
+                    }
+                }
+            }catch (Exception e){
+                System.out.println("Error \"insertCar()\" is: " + e);
+            }
+        }
+
+        public void insertMaster(){
+            try {
+                id_car--;
+                masterInfo = new HashMap<>();
+                for(int i=1; i<=amountOfRaws; i++) {
+                    textArea.append("Inserting [" + i + "] key-value for masters\n");
+                    masterInfo.put("name", "Name" + i);
+                    int index = randomGenerator.nextInt(id_car - 1) + 1;
+                    masterInfo.put("car", "carID:" + index);
+                    jedis.hmset("masterID:" + i, masterInfo);
+                    textArea.append("Inserted [" + i + "] key-value for masters...\n");
+                    counter++;
+                }
+            }catch (Exception e){
+                System.out.println("Error \"insertMaster()\" is: " + e);
+            }
+        }
+
+        public void retreiveRecord(){
+            try {
+                String cId, mId;
+                String valEng = "", valMod = "", valName = "", resCar = "", tmp;
+                for(int i=1; i<=counter; i++){
+                    mId = "masterID:" + i;
+                    Map<String, String> resM = jedis.hgetAll(mId);
+                    Set set = resM.entrySet();
+                    for (Object aSet : set) {
+                        Map.Entry me = (Map.Entry) aSet;
+                        if (me.getKey().equals("name")) {
+                            valName = me.getKey() + ": " + me.getValue();
+                        }
+                        if (me.getKey().equals("car")) {
+                            for(int j=1; j<54; j++){
+                                cId = "carID:" + j;
+                                tmp = me.getValue() + "";
+                                if (cId.equals(tmp)) {
+                                    Map<String, String> resC = jedis.hgetAll(cId);
+                                    Set set1 = resC.entrySet();
+                                    for (Object bSet : set1) {
+                                        Map.Entry ke = (Map.Entry) bSet;
+                                        if (ke.getKey().equals("model")) {
+                                            valMod = ke.getKey() + ": " + ke.getValue();
+                                        }
+                                        if (ke.getKey().equals("engine")) {
+                                            valEng = ke.getKey() + ": " + ke.getValue();
+                                        }
+                                    }
+                                    resCar = cId + ": {" + valMod + ", " + valEng +"}";
+                                    break;
+                                }
+                            }
+                            textArea.append(mId + "{" + valName + ", " + resCar + "}\n");
+                        }
+                    }
+                }
+            }catch (Exception e){
+                System.out.println("Error \"retreiveData()\" is: " + e);
+            }
+        }
+
         @Override
         protected Void doInBackground() throws Exception {
             String s = "";
             progressBar.setIndeterminate(true);
             obTestPGDB.connectDB();
             obTestPGDB.resetDB();
+            jedis = obTestRDB.connectDB();
+            obTestRDB.deleteRecord(jedis);
             labelDownload.setText("Downloading...");
             textArea.setText("");
             switch (choice){
@@ -288,13 +397,76 @@ public class MainFrame extends JFrame implements DataBaseInterface{
 
                     time6 = checkTime(startDate5, endDate5);
 
+                    /////
                     System.out.println(time4 + " : " + time5 + " : " + time6);
+                    resPGFrame = new ResultFrame("PG");
+                    resPGexist = true;
                     break;
                 case "RD":
-                    System.out.println("RD");
+                    Date startDate8 = new Date();
+                    insertCar();
+                    Date endDate8 = new Date();
+
+                    time9 = checkTime(startDate8, endDate8);
+
+                    Date startDate9 = new Date();
+                    insertMaster();
+                    Date endDate9 = new Date();
+
+                    time10 = checkTime(startDate9, endDate9);
+
+                    Date startDate10 = new Date();
+                    retreiveRecord();
+                    Date endDate10 = new Date();
+
+                    time11 = checkTime(startDate10, endDate10);
+                    resRDFrame = new ResultFrame("RD");
+                    resRDExist = true;
                     break;
                 case "RDPG":
+                    startDate3 = new Date();
                     insertData(obTestPGDB, "car", amountOfRaws);
+                    endDate3 = new Date();
+
+                    time4 = checkTime(startDate3, endDate3);
+
+                    startDate4 = new Date();
+                    insertData(obTestPGDB, "master", amountOfRaws);
+                    endDate4 = new Date();
+
+                    time5 = checkTime(startDate4, endDate4);
+
+                    startDate5 = new Date();
+                    selectRecordTableDB();
+                    endDate5 = new Date();
+
+                    time6 = checkTime(startDate5, endDate5);
+
+                    /////
+                    System.out.println(time4 + " : " + time5 + " : " + time6);
+
+                    startDate8 = new Date();
+                    insertCar();
+                    endDate8 = new Date();
+
+                    time9 = checkTime(startDate8, endDate8);
+
+                    startDate9 = new Date();
+                    insertMaster();
+                    endDate9 = new Date();
+
+                    time10 = checkTime(startDate9, endDate9);
+
+                    startDate10 = new Date();
+                    retreiveRecord();
+                    endDate10 = new Date();
+
+                    time11 = checkTime(startDate10, endDate10);
+
+                    /////
+                    System.out.println(time9 + " : " + time10 + " : " + time11);
+                    resRDPGFrame = new ResultFrame("RDPG");
+                    resRDPGexist = true;
                     break;
                 default:
                     JOptionPane.showMessageDialog(null, "My Goodness, this is unknown command.");
@@ -315,35 +487,5 @@ public class MainFrame extends JFrame implements DataBaseInterface{
             buttonCount.setEnabled(true);
             buttonCencel.setEnabled(false);
         }
-    }/*
-
-    public void insertData(pgsqlDB ob, String tableName, int n) {
-        int idx, idx1, id_car;//, countCar = 1;
-        String Model, Engine, name;
-        Random rn = new Random();
-
-        switch (tableName) {
-            case "car":
-                for (int i = 1; i < models.length; i++) {
-                    for (int j = 1; j < engines.length; j++) {
-                        Model = models[i];
-                        Engine = engines[j];
-
-                        textArea.append(ob.insertIntoTableDB(Model, Engine, k));
-                        k++;
-                    }
-                }
-                break;
-            case "master":
-                k--;
-                for (int i = 1; i <= n; i++) {
-                    name = "Name" + String.valueOf(i);
-                    id_car = rn.nextInt(k - 1) + 1;
-                    textArea.append(ob.insertIntoTableDB(name, id_car, i));
-                }
-                break;
-            default:
-                throw new IllegalArgumentException(tableName);
-        }
-    }*/
+    }
 }

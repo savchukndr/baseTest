@@ -97,9 +97,9 @@ public class ResultFrame extends JFrame{
         switch (choise){
             case "PG":
                 setSize(400, 200);
-                carResRDPG = "0,1234";
+                /*carResRDPG = "0,1234";
                 masterResRDPG = "1,1111";
-                selectResRDPG = "10,1010101";
+                selectResRDPG = "10,1010101";*/
 
                 timeIntoCarLabel.setText("Insert into car time: ");
                 carResLabel.setText(carResRDPG);
@@ -131,9 +131,9 @@ public class ResultFrame extends JFrame{
                 break;
             case "RD":
                 setSize(400, 200);
-                carResRDPG = "0,1234";
+                /*carResRDPG = "0,1234";
                 masterResRDPG = "1,1111";
-                selectResRDPG = "10,1010101";
+                selectResRDPG = "10,1010101";*/
 
                 timeIntoCarLabel.setText("Insert redcord into car time: ");
                 carResLabel.setText(carResRDPG);
@@ -164,13 +164,13 @@ public class ResultFrame extends JFrame{
                 break;
             case "RDPG":
                 setSize(400, 400);
-                carResRDPG = "0,1234";
+                /*carResRDPG = "0,1234";
                 masterResRDPG = "1,1111";
                 selectResRDPG = "10,1010101";
 
                 carResRD = "0,1234";
                 masterResRD = "1,1111";
-                retreiveResRD = "10,1010101";
+                retreiveResRD = "10,1010101";*/
 
                 timeIntoCarLabel.setText("Insert into car time: ");
                 carResLabel.setText(carResRDPG);

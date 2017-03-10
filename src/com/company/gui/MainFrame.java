@@ -22,9 +22,11 @@ import java.awt.event.ActionListener;
 public class MainFrame extends JFrame implements DataBaseInterface{
 
     private aTask t;
+    private JTextField testField;
     private JButton buttonCount, buttonCencel;
     private JProgressBar progressBar;
     private JLabel labelDownload;
+    private JLabel labelTextAmount;
     private JTextArea textArea;
     private JRadioButton radioButtonPG, radioButtonRD, radioButtonRDPG;
     private ButtonGroup radioButtonGroup;
@@ -55,7 +57,7 @@ public class MainFrame extends JFrame implements DataBaseInterface{
             resPGexist = false;
             resRDPGexist = false;
             k = 1;
-            amountOfRaws = 100;
+            amountOfRaws = 1000;
             initialize();
         }catch (InterruptedException e){
             System.out.print("Exception: " + e);
@@ -112,6 +114,10 @@ public class MainFrame extends JFrame implements DataBaseInterface{
         textArea = new JTextArea(20, 40);
         textArea.setEditable(false);
 
+        labelTextAmount = new JLabel("Please, input amount of raws:");
+        testField = new JTextField(2);
+        testField.setText(String.valueOf(amountOfRaws));
+
         //adding scroll to main Text Area
         JScrollPane scroll = new JScrollPane (textArea,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -138,18 +144,24 @@ public class MainFrame extends JFrame implements DataBaseInterface{
         //radiobutton for Radis
         panelLeft.add(radioButtonRD, new GridBagConstraints(0, 1, 1, 1, 1, 1,
                 GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
-                new Insets(4,2,2,2), 0, 0));
+                new Insets(1,2,2,2), 0, 0));
         //radiobutton for both
         panelLeft.add(radioButtonRDPG, new GridBagConstraints(0, 2, 1, 1, 1, 1,
                 GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
-                new Insets(4,2,2,2), 0, 0));
+                new Insets(1,2,2,2), 0, 0));
+        panelLeft.add(labelTextAmount, new GridBagConstraints(0, 3, 1, 1, 1, 1,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(100,2,2,2), 2, 2));
+        panelLeft.add(testField, new GridBagConstraints(0, 4, 1, 1, 1, 1,
+                GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
+                new Insets(1,2,2,2), 2, 2));
         //buttonCount added to panelLeft
-        panelLeft.add(buttonCount, new GridBagConstraints(0, 3, 1, 1, 1, 1,
+        panelLeft.add(buttonCount, new GridBagConstraints(0, 5, 1, 1, 1, 1,
                 GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
-                new Insets(100,2,2,2), 2, 2));
-        panelLeft.add(buttonCencel, new GridBagConstraints(0, 4, 1, 1, 1, 1,
+                new Insets(20,2,2,2), 2, 2));
+        panelLeft.add(buttonCencel, new GridBagConstraints(0, 6, 1, 1, 1, 1,
                 GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
-                new Insets(100,2,2,2), 2, 2));
+                new Insets(1,2,2,2), 2, 2));
 
 
 
@@ -169,40 +181,39 @@ public class MainFrame extends JFrame implements DataBaseInterface{
                 new Insets(2,2,2,2), 2, 2));
         add(panelRight, BorderLayout.CENTER);
         labelDownload.setText("Press \"Start\" to start downloadnig");
-        //progressBar.setValue(0);
 
         add(panelTop, BorderLayout.NORTH);
         setVisible(true);
         pack();
 
-        //ResultWindow
-        //r1 = new ResultFrame("PG");
-        //resFrame.show();
-        //////////////////////////
-
     }
 
     private void startActionPerformed(ActionEvent e){
-        (t = new aTask()).execute();
-        buttonCount.setEnabled(false);
-        buttonCencel.setEnabled(true);
-        k = 1;
-        if (resPGexist){
-            resPGFrame.dispose();
-            resPGexist = false;
+        if (testField.getText().equals("")){
+            JOptionPane.showMessageDialog(null, "The field is empty!!!\n Do not forget to input amount of raws!");
+        }else {
+            if (!testField.getText().matches("^\\d+$")){
+                JOptionPane.showMessageDialog(null, "Wrong symbols! (Not Integer)");
+            }else {
+                amountOfRaws = Integer.parseInt(testField.getText());
+                (t = new aTask()).execute();
+                buttonCount.setEnabled(false);
+                buttonCencel.setEnabled(true);
+                k = 1;
+                if (resPGexist) {
+                    resPGFrame.dispose();
+                    resPGexist = false;
+                }
+                if (resRDExist) {
+                    resRDFrame.dispose();
+                    resPGexist = false;
+                }
+                if (resRDPGexist) {
+                    resRDPGFrame.dispose();
+                    resRDPGexist = false;
+                }
+            }
         }
-        if (resRDExist){
-            resRDFrame.dispose();
-            resPGexist = false;
-        }
-        if (resRDPGexist){
-            resRDPGFrame.dispose();
-            resRDPGexist = false;
-        }
-        //r1.dispose();
-        //resPGFrame.dispose();
-        //resRDPGFrame.dispose();
-        //resRDFrame.dispose();
     }
 
     private void cencelActionPerformed(ActionEvent e){
@@ -369,7 +380,6 @@ public class MainFrame extends JFrame implements DataBaseInterface{
 
         @Override
         protected Void doInBackground() throws Exception {
-            String s = "";
             progressBar.setIndeterminate(true);
             obTestPGDB.connectDB();
             obTestPGDB.resetDB();
@@ -383,23 +393,21 @@ public class MainFrame extends JFrame implements DataBaseInterface{
                     insertData(obTestPGDB, "car", amountOfRaws);
                     Date endDate3 = new Date();
 
-                    time4 = checkTime(startDate3, endDate3);
+                    time4 = Math.floor(checkTime(startDate3, endDate3) * 100) / 100;
 
                     Date startDate4 = new Date();
                     insertData(obTestPGDB, "master", amountOfRaws);
                     Date endDate4 = new Date();
 
-                    time5 = checkTime(startDate4, endDate4);
+                    time5 = Math.floor(checkTime(startDate4, endDate4) * 100) / 100;
 
                     Date startDate5 = new Date();
                     selectRecordTableDB();
                     Date endDate5 = new Date();
 
-                    time6 = checkTime(startDate5, endDate5);
+                    time6 = Math.floor(checkTime(startDate5, endDate5) * 100) / 100;
 
-                    /////
-                    System.out.println(time4 + " : " + time5 + " : " + time6);
-                    resPGFrame = new ResultFrame("PG");
+                    resPGFrame = new ResultFrame(Double.toString(time4), Double.toString(time5), Double.toString(time6), "PG");
                     resPGexist = true;
                     break;
                 case "RD":
@@ -407,20 +415,20 @@ public class MainFrame extends JFrame implements DataBaseInterface{
                     insertCar();
                     Date endDate8 = new Date();
 
-                    time9 = checkTime(startDate8, endDate8);
+                    time9 = Math.floor(checkTime(startDate8, endDate8) * 100) / 100;
 
                     Date startDate9 = new Date();
                     insertMaster();
                     Date endDate9 = new Date();
 
-                    time10 = checkTime(startDate9, endDate9);
+                    time10 = Math.floor(checkTime(startDate9, endDate9) * 100) / 100;
 
                     Date startDate10 = new Date();
                     retreiveRecord();
                     Date endDate10 = new Date();
 
-                    time11 = checkTime(startDate10, endDate10);
-                    resRDFrame = new ResultFrame("RD");
+                    time11 = Math.floor(checkTime(startDate10, endDate10) * 100) / 100;
+                    resRDFrame = new ResultFrame(Double.toString(time9), Double.toString(time10), Double.toString(time11), "RD");
                     resRDExist = true;
                     break;
                 case "RDPG":
@@ -428,44 +436,40 @@ public class MainFrame extends JFrame implements DataBaseInterface{
                     insertData(obTestPGDB, "car", amountOfRaws);
                     endDate3 = new Date();
 
-                    time4 = checkTime(startDate3, endDate3);
+                    time4 = Math.floor(checkTime(startDate3, endDate3) * 100) / 100;
 
                     startDate4 = new Date();
                     insertData(obTestPGDB, "master", amountOfRaws);
                     endDate4 = new Date();
 
-                    time5 = checkTime(startDate4, endDate4);
+                    time5 = Math.floor(checkTime(startDate4, endDate4) * 100) / 100;
 
                     startDate5 = new Date();
                     selectRecordTableDB();
                     endDate5 = new Date();
 
-                    time6 = checkTime(startDate5, endDate5);
-
-                    /////
-                    System.out.println(time4 + " : " + time5 + " : " + time6);
+                    time6 = Math.floor(checkTime(startDate5, endDate5) * 100) / 100;
 
                     startDate8 = new Date();
                     insertCar();
                     endDate8 = new Date();
 
-                    time9 = checkTime(startDate8, endDate8);
+                    time9 = Math.floor(checkTime(startDate8, endDate8) * 100) / 100;
 
                     startDate9 = new Date();
                     insertMaster();
                     endDate9 = new Date();
 
-                    time10 = checkTime(startDate9, endDate9);
+                    time10 = Math.floor(checkTime(startDate9, endDate9) * 100) / 100;
 
                     startDate10 = new Date();
                     retreiveRecord();
                     endDate10 = new Date();
 
-                    time11 = checkTime(startDate10, endDate10);
+                    time11 = Math.floor(checkTime(startDate10, endDate10) * 100) / 100;
 
-                    /////
-                    System.out.println(time9 + " : " + time10 + " : " + time11);
-                    resRDPGFrame = new ResultFrame("RDPG");
+                    resRDPGFrame = new ResultFrame(Double.toString(time4), Double.toString(time5), Double.toString(time6),
+                                                    Double.toString(time9), Double.toString(time10), Double.toString(time11),"RDPG");
                     resRDPGexist = true;
                     break;
                 default:

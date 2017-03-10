@@ -274,6 +274,7 @@ public class MainFrame extends JFrame implements DataBaseInterface{
 
             switch (tableName) {
                 case "car":
+                    labelDownload.setText("Inserting into car... (PostgreSQL)");
                     for(int i=1; i < models.length; i++) {
                         for(int j=1; j < engines.length; j++) {
                             Model = models[i];
@@ -284,15 +285,18 @@ public class MainFrame extends JFrame implements DataBaseInterface{
                             k++;
                         }
                     }
+                    labelDownload.setText("Inserted into car! (PostgreSQL)");
                     break;
                 case "master":
                     k--;
+                    labelDownload.setText("Inserting into master... (PostgreSQL)");
                     for(int i=1; i <= n; i++) {
                         name = "Name" + String.valueOf(i);
                         id_car = rn.nextInt(k - 1) + 1;
 
                         textArea.append(ob.insertIntoTableDB(name, id_car, i));
                     }
+                    labelDownload.setText("Inserted into master! (PostgreSQL)");
                     break;
                 default:
                     throw new IllegalArgumentException(tableName);
@@ -302,6 +306,7 @@ public class MainFrame extends JFrame implements DataBaseInterface{
         public void insertCar(){
             try {
                 carInfo = new HashMap<>();
+                labelDownload.setText("Inserting into car... (Redis)");
                 for(int i=1; i < models.length; i++) {
                     for (int j=1; j < engines.length; j++) {
                         textArea.append("Inserting [" + id_car + "] key-value for cars\n");
@@ -316,12 +321,14 @@ public class MainFrame extends JFrame implements DataBaseInterface{
             }catch (Exception e){
                 System.out.println("Error \"insertCar()\" is: " + e);
             }
+            labelDownload.setText("Inserted into car! (Redis)");
         }
 
         public void insertMaster(){
             try {
                 id_car--;
                 masterInfo = new HashMap<>();
+                labelDownload.setText("Inserting into master... (Redis)");
                 for(int i=1; i<=amountOfRaws; i++) {
                     textArea.append("Inserting [" + i + "] key-value for masters\n");
                     masterInfo.put("name", "Name" + i);
@@ -334,12 +341,14 @@ public class MainFrame extends JFrame implements DataBaseInterface{
             }catch (Exception e){
                 System.out.println("Error \"insertMaster()\" is: " + e);
             }
+            labelDownload.setText("Inserted into master! (Redis)");
         }
 
         public void retreiveRecord(){
             try {
                 String cId, mId;
                 String valEng = "", valMod = "", valName = "", resCar = "", tmp;
+                labelDownload.setText("Retreiving (key-value) records from RedisDB...");
                 for(int i=1; i<=counter; i++){
                     mId = "masterID:" + i;
                     Map<String, String> resM = jedis.hgetAll(mId);
@@ -376,6 +385,7 @@ public class MainFrame extends JFrame implements DataBaseInterface{
             }catch (Exception e){
                 System.out.println("Error \"retreiveData()\" is: " + e);
             }
+            labelDownload.setText("Retreived (key-value) records from RedisDB!");
         }
 
         @Override
@@ -487,7 +497,7 @@ public class MainFrame extends JFrame implements DataBaseInterface{
         @Override
         protected void done(){
             progressBar.setIndeterminate(false);
-            labelDownload.setText("Downloaded!");
+            labelDownload.setText("Completed!");
             buttonCount.setEnabled(true);
             buttonCencel.setEnabled(false);
         }

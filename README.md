@@ -1,6 +1,6 @@
 # README
 <h3>About</h3>
-This is a part of my master`s diploma project. And the main purpose is a comparing two type data base speed:<br/> relational (SQL using) and non relational databases (NoSQL).
+This is a part of my master`s diploma project. And the main purpose is a omparison of two type data base select/insert speed:<br/> relational (SQL using) and non relational databases (NoSQL).
 DB that was used for comparison:<br/>
 <br/>
 1. PostgreSQL (relational);<br/>
